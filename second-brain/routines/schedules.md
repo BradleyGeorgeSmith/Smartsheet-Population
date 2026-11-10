@@ -1,5 +1,8 @@
 # Schedules: cron lines and activation commands
 
+**Status (2026-11-10):** activated as cloud scheduled tasks; see
+`activation-log.md` for trigger ids, first-run times and known limits.
+
 | Routine | Agent | Cron (Pacific/Auckland) | `/schedule` command (run in a Claude Code session on this repo) |
 |---|---|---|---|
 | Morning plan | 09 Journal | `CRON_TZ=Pacific/Auckland 7 6 * * 1-6` | `/schedule every day except Sunday at 6:07am NZ, run the Journal Agent morning pass as described in second-brain/agents/09-journal-agent.md` |

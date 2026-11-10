@@ -37,7 +37,7 @@ Agent regenerates `todo-prompts/` from a Todoist export.
 
 ## First week
 
-1. Read `routines/README.md` and activate the Weekly Review scheduled task.
+1. Read `routines/activation-log.md`: the scheduled tasks are live; check the first runs land.
 2. Dictate a morning page tomorrow and run the Journal Agent on it.
 3. Open `todo-prompts/index.md`, pick one category, and run it as one
    session: "work through todo-prompts/ai-agents-automation/, oldest first".

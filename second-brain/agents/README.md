@@ -24,6 +24,6 @@ notes you reopen. Express pulls from Projects to make packets. Pinterest,
 Quote and Marketing capture agents are specialised Capture agents with their
 own sources.
 
-Activation: none of these are live. `routines/schedules.md` shows the exact
+Activation: live as cloud scheduled tasks since 2026-11-10 (see `routines/activation-log.md`). `routines/schedules.md` shows the exact
 `/schedule` commands and cron lines. Activate the Weekly Review first, then
 Journal, then the rest one at a time.

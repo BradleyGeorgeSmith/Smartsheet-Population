@@ -12,6 +12,15 @@ Install: `pip install -r requirements.txt` (Python 3.10 or newer).
 Tokens are read from environment variables only. For cloud scheduled tasks,
 store them as network secrets on the environment, not as plain variables.
 
+When a token is stored as a network secret, the environment's proxy injects
+it into requests to that host and no environment variable holds it. Run the
+scripts with placeholder values (`PINTEREST_ACCESS_TOKEN=proxy-injected
+DROPBOX_ACCESS_TOKEN=proxy-injected`) so they do not skip the work; the proxy
+overwrites the Authorization header. Dropbox needs secrets for both
+`api.dropboxapi.com` (metadata, folders) and `content.dropboxapi.com`
+(uploads). For the Hydralada team account set
+`DROPBOX_PATH_ROOT_NS=2661730259` so `/Brad Smith/...` paths resolve.
+
 ## Pinterest token (one-time)
 1. https://developers.pinterest.com/apps/ create an app (standard access is
    enough for your own boards).
