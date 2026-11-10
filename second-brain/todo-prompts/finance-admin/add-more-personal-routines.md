@@ -1,0 +1,43 @@
+# Add more personal routines
+
+| Field | Value |
+|---|---|
+| Todoist | [6RvpWhrJ6qq8mR9g](https://app.todoist.com/app/task/6RvpWhrJ6qq8mR9g) |
+| Project | Home |
+| Priority | p4 |
+| Due | none |
+| Category | Finance, subscriptions and admin |
+| PARA home | `20_Areas/Finance-and-Subscriptions` |
+| Sensitivity | normal |
+
+## As captured
+Add more personal routines
+> e.g. pay taxes yearly, empty the bins weekly, meditate 10 mins every weekday 9am
+
+## Context
+Subscriptions have been leaking money (four Lovable top-ups in one day, renewals on tools no longer used). The weekly review's transactions step is where this gets caught.
+
+## Prompt (paste into Claude, ChatGPT or an agent run)
+```text
+This is a finance, subscription or admin item:
+Task: Add more personal routines
+Notes: e.g. pay taxes yearly, empty the bins weekly, meditate 10 mins every weekday 9am
+From Todoist project: Home. Due: none.
+
+1. Restate as a decision or an action with a deadline.
+2. List what I need to see first: account, last charge, renewal date, who pays (me, Hydralada, Caleb), where the invoice lives.
+3. If it is a subscription: give the keep/cancel/downgrade test (used in the last 30 days? duplicates another tool? needed for an active project?) and a recommendation with the reason.
+4. If it is a payment or refund: the exact steps and the message to send, under 60 words.
+5. Add a line for 20_Areas/Finance-and-Subscriptions/subscriptions.md (name, cost, cycle, renewal, decision).
+6. Calendar line for the renewal or follow-up in Morgen.
+No financial advice beyond organising the decision.
+```
+
+## Next steps
+1. Find the last invoice or charge and the renewal date.
+2. Decide keep, cancel or downgrade; act the same day.
+3. Record it in 20_Areas/Finance-and-Subscriptions/subscriptions.md.
+
+## Session suggestion
+Run this together with the other items in `todo-prompts/finance-admin/` (one Claude Code
+session per category, oldest first). Related agent: see `second-brain/agents/README.md`.

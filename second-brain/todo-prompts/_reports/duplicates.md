@@ -1,0 +1,221 @@
+# Near-duplicate tasks
+
+65 clusters where titles match at 85 percent or better. Propose merging each cluster into one task.
+
+- **Bang And Olufsen Earbuds**
+  - `6h7CCcVg8w3XjpHv` Bang And Olufsen Earbuds (Tasks (migrated from To Do))
+  - `6h7F84FWh7W2jq6m` Bang and Olufsen earbuds (Tasks 6)
+- **iPad**
+  - `6h7CCccwPPm264MM` iPad (Tasks (migrated from To Do))
+  - `6h7F845Xc3Xwq7Cm` iPad (Tasks 6)
+- **Peptides**
+  - `6h7F84F2FwrvQcfm` Peptides (Building Up My Body (Morley Studio))
+  - `6h7F8V3vXJ87GM2F` Peptides (Tasks 6)
+- **HGH**
+  - `6h7F84F52hWffHwm` HGH (Building Up My Body (Morley Studio))
+  - `6h7F854vfRmMQc2m` HGH (Building Up My Body (Morley Studio))
+- **New phone**
+  - `6h7F84Pvr45m9w6m` New phone (Tasks 6)
+  - `6h7FMWFmgXpCvW5P` New phone (Tasks 8)
+- **New conference camera**
+  - `6h7F84q9vRxHrwGm` New conference camera (Tasks 6)
+  - `6h7FP72jFV5hMmMp` New conference camera (2026 Goals and Habit Stacking)
+  - `6hFqjHqgj2xcrPQf` New conference camera (Inbox)
+- **Nose fixed**
+  - `6h7F852WcjG6hCpF` Nose fixed (Tasks 6)
+  - `6h7FR6cqrxw6hfC3` Nose fixed (Tasks 3)
+- **Air conditioning for studio**
+  - `6h7F87Q584895JCF` Air conditioning for studio (Building Up My Body (Morley Studio))
+  - `6h7FR75jj3r4934V` Air conditioning for studio (Tasks 3)
+  - `6hgGpVVXMRGQJ4Mf` Air conditioning for studio (Inbox)
+- **Remove Streamline**
+  - `6h7F8Fp8w5CXg6QF` Remove Streamline (Tasks 6)
+  - `6h7FXwWGhm85VQMF` Remove Streamline (Action first thing)
+- **Order peptides**
+  - `6h7F8Fr2CrMRChpF` Order peptides (Tasks 6)
+  - `6h7FW7GxRg2X6xM3` Order peptides (Tasks 3)
+  - `6h7FWc4F7MHpR2x3` Order peptides (Tasks 3)
+  - `6h7FXgh6XvW8Q42m` Order peptides (Action first thing)
+  - `6h7Fg9X9jJXJjFgC` Order peptides (Tasks 4)
+  - `6h7FgRqfhwfjrFCC` Order peptides (Tasks 4)
+- **Air conditioning for gym**
+  - `6h7F8MjVjvPP283F` Air conditioning for gym (Tasks 6)
+  - `6h7F8qQwrc5MPrfm` Air conditioning for gym (Tasks 6)
+- **Radar detector**
+  - `6h7F8RPchMwxrp2m` Radar detector (Tasks 6)
+  - `6hgGpj3qHrvGvFPf` Radar detector (Inbox)
+- **Saddle seat**
+  - `6h7F8V76vHvgCC6m` Saddle seat (Tasks 6)
+  - `6h7FH7C52vQHPwCR` Saddle seat (Tasks 7)
+  - `6h7FP6w89PJ89qhG` Saddle seat (2026 Goals and Habit Stacking)
+- **Become a father (life goal)**
+  - `6h7F8mhv6VjcM9Rm` Become a father (life goal) (Tasks 6)
+  - `6h7FcmwRQqG5Q5HC` Become a father (life goal) (Tasks 4)
+- **Do things for others**
+  - `6h7F8mm72rX5H5QF` Do things for others (Tasks 6)
+  - `6h7FXwmwFJr72f9V` Do things for others (Tasks 3)
+- **Pray**
+  - `6h7F8mqw4C84xxGF` Pray (Tasks 6)
+  - `6h7FMRCQGF4qQ37w` Pray (Tasks 8)
+- **Marketing copy: rough ground, transport on a trailer behind a regular ute; chang**
+  - `6h7F8rqFmVvC792P` Marketing copy: rough ground, transport on a trailer behind a regular ute; chang (High Priority - Reminders)
+  - `6h7Ffc8mwVfC43XC` Marketing copy: rough ground, transport on a trailer behind a regular ute; chang (Tasks 4)
+- **Tools from Toop**
+  - `6h7F8vmm27jmMJmw` Tools from Toop (High Priority - Reminders)
+  - `6h7FPGrg9qPcQ2x9` Tools from Toop (Follow Up Today)
+- **Marriage (life goal)**
+  - `6h7F95mjjrxHpm2R` Marriage (life goal) (Big Whales - Optimism/Drive/Purpose)
+  - `6h7FPGMW67Mr4HPp` Marriage (life goal) (2026 Goals and Habit Stacking)
+- **Clear emails**
+  - `6h7FFcc9pJRrgM6F` Clear emails (Tasks 6)
+  - `6h7FVJJ2J4ch4h7F` Clear emails (MAIN GOALS (also in ClickUp))
+- **Invoices for Sarah**
+  - `6h7FFvjmcXFwPVfR` Invoices for Sarah (Tasks 7)
+  - `6h7Fcx658m93rxCw` Invoices for Sarah (Action First Thing 02)
+  - `6h7Jhrp6WJxM3h57` Invoices for Sarah (Inbox)
+- **Order more creatine pills**
+  - `6h7FG2QgRGFcxHMr` Order more creatine pills (MedSafe - Medication)
+  - `6h7FMXR7vP29cCjg` Order more creatine pills (Theme 12-02-2026 Cloud Storage / Google AI)
+- **Order Ambrotose**
+  - `6h7FG2mx4fCRFXcr` Order Ambrotose (MedSafe - Medication)
+  - `6h7FG3hfmgGH82vr` Order Ambrotose (MedSafe - Medication)
+  - `6h7FRWJjH493pM8V` Order Ambrotose (Tasks 3)
+- **Order Prelox**
+  - `6h7FG32q5pF8gRqJ` Order Prelox (MedSafe - Medication)
+  - `6h7FG5crX228HwhJ` Order Prelox (MedSafe - Medication)
+  - `6h7Fg9vQ5qpQPWCC` Order Prelox (Tasks 4)
+- **Order weight vest**
+  - `6h7FG37QgJ8gcP72` Order weight vest (Tasks 7)
+  - `6h7Fc83xV9xF2rmF` Order weight vest (Action first thing)
+- **Get right, stay right**
+  - `6h7FG3f8jf7M3662` Get right, stay right (Tasks 7)
+  - `6h7FV7xGj84hxqcm` Get right, stay right (MAIN GOALS (also in ClickUp))
+- **Order more peptides**
+  - `6h7FG3pqxfHMpJ7r` Order more peptides (MedSafe - Medication)
+  - `6h7FG9XGFvcXxjQJ` Order more peptides (MedSafe - Medication)
+  - `6h7FMQFXgrXGmHGP` Order more peptides (Tasks 8)
+  - `6h7FW69Hx9R94mf8` Order more peptides (Action ASAP)
+- **Order more kava**
+  - `6h7FG4G3qhXR9hxr` Order more kava (MedSafe - Medication)
+  - `6h7FMQRMrJ9Xx6fw` Order more kava (Tasks 8)
+- **Take HGH (as prescribed)**
+  - `6h7FG4WCcmGwg4WR` Take HGH (as prescribed) (Tasks 7)
+  - `6h7FXwHxgWqhqJqm` Take HGH (as prescribed) (Action first thing)
+- **Order CBD and THC**
+  - `6h7FG55q2xX4hr3J` Order CBD and THC (MedSafe - Medication)
+  - `6h7FRWRwcVGP7fg3` Order CBD and THC (Tasks 3)
+  - `6h7FW7R3rXmfX9q3` Order CBD and THC (Tasks 3)
+- **Order Fortisips**
+  - `6h7FG572JfF7r5Qr` Order Fortisips (MedSafe - Medication)
+  - `6h7FG9hQwc9QXp3r` Order Fortisips (MedSafe - Medication)
+- **Order kava**
+  - `6h7FG5JJX4hCfQhr` Order kava (MedSafe - Medication)
+  - `6h7FW7Jv7wJc5CG3` Order kava (Tasks 3)
+- **Order Hydroxycut**
+  - `6h7FG5WgH228hFFJ` Order Hydroxycut (MedSafe - Medication)
+  - `6h7FRW2cchRQ7jWV` Order Hydroxycut (Tasks 3)
+- **Purchase acoustic guitar**
+  - `6h7FG8XFpv7Jp5M2` Purchase acoustic guitar (Tasks 7)
+  - `6h7FHc75JMR8m6fw` Purchase acoustic guitar (Tasks 8)
+- **Get peptides prescribed**
+  - `6h7FGjJQvPHVqH7R` Get peptides prescribed (Tasks 7)
+  - `6h7FGvPpC3Xg9wq2` Get peptides prescribed (Tasks 7)
+- **Order more Ambrotose**
+  - `6h7FH2VmRxjPGH8R` Order more Ambrotose (Tasks 7)
+  - `6h7FMHHrxC878WHg` Order more Ambrotose (Theme 12-02-2026 Cloud Storage / Google AI)
+- **Keep short accounts**
+  - `6h7FH3h29j69qXQR` Keep short accounts (Tasks 7)
+  - `6h7Fcjx2Qh5fxH3C` Keep short accounts (Tasks 4)
+- **Shower regularly**
+  - `6h7FH8Pvv4CrH59R` Shower regularly (Tasks 7)
+  - `6h7FVHgHhq3Ph9vF` Shower regularly (MAIN GOALS (also in ClickUp))
+- **Order fadogia agrestis**
+  - `6h7FMXm5xP7hpJ38` Order fadogia agrestis (Theme 12-02-2026 Cloud Storage / Google AI)
+  - `6h7FgC3V7PFgJm3C` Order fadogia agrestis (Tasks 4)
+- **New teeth**
+  - `6h7FP6G5xwh89X6G` New teeth (2026 Goals and Habit Stacking)
+  - `6h7FfGRMhg8X85GC` New teeth (Tasks 4)
+- **Fix nose**
+  - `6h7FP6RQ9rCGwQrp` Fix nose (2026 Goals and Habit Stacking)
+  - `6h7FWxxw5fMQfR53` Fix nose (Tasks 3)
+- **New doctor**
+  - `6h7FR7MgCQ6qjwqV` New doctor (Tasks 3)
+  - `6h7FRWMRxCjhm97V` New doctor (Tasks 3)
+- **Follow up nose operation**
+  - `6h7FW7gH6HQ2q6qV` Follow up nose operation (Tasks 3)
+  - `6h7Fh96Gj8VPMqVj` Follow up nose operation (Tasks 4)
+- **Cancel ClickUp**
+  - `6h7FX27Q7CjrqXm3` Cancel ClickUp (Tasks 3)
+  - `6hW86G3xGM8jF8C7` Cancel ClickUp (Inbox)
+- **Peptides ordered**
+  - `6h7Fcwg2V82RrhMw` Peptides ordered (Action First Thing 02)
+  - `6h7FfGjH793VWJ4j` Peptides ordered (Tasks 4)
+- **Explore Todoist's curated personal templates**
+  - `6RvpWhrqXC7VM7J8` Explore Todoist's curated personal templates (Home)
+  - `6RvpWj5qg7vxV8F3` Explore Todoist's curated work templates (My work)
+- **Pay Psychiatry.nz for tomorrow's 3pm appointment**
+  - `6h7FGch3v2C7QCM2` Pay Psychiatry.nz for tomorrow's 3pm appointment (Tasks 7)
+  - `6h7FVM929q8vJ6Fm` Pay invoice for Psychiatry.nz for tomorrow's 3pm appointment (MAIN GOALS (also in ClickUp))
+- **New curved screen or 8K**
+  - `6h7F87cM6Cm6HQMm` New curved screen or 8K (Building Up My Body (Morley Studio))
+  - `6h7FP72QJ6mQHH2G` New curved screen (2026 Goals and Habit Stacking)
+- **Order more New Balance shoes**
+  - `6h7CCxP8jxXwvW7q` Order more New Balance shoes (Diary/Journal/Notes 17-02-2026)
+  - `6h7FGQ86GxW667W2` Order New Balance shoes (Tasks 7)
+- **Order more creatine pills**
+  - `6h7FG2QgRGFcxHMr` Order more creatine pills (MedSafe - Medication)
+  - `6h7FMXR7vP29cCjg` Order more creatine pills (Theme 12-02-2026 Cloud Storage / Google AI)
+  - `6h7Ffv9G8Jw8FMHC` Order creatine pills (Tasks 4)
+- **Order Ambrotose**
+  - `6h7FG2mx4fCRFXcr` Order Ambrotose (MedSafe - Medication)
+  - `6h7FG3hfmgGH82vr` Order Ambrotose (MedSafe - Medication)
+  - `6h7FRWJjH493pM8V` Order Ambrotose (Tasks 3)
+  - `6h7FH2VmRxjPGH8R` Order more Ambrotose (Tasks 7)
+  - `6h7FMHHrxC878WHg` Order more Ambrotose (Theme 12-02-2026 Cloud Storage / Google AI)
+- **Order Fortisips**
+  - `6h7FG572JfF7r5Qr` Order Fortisips (MedSafe - Medication)
+  - `6h7FG9hQwc9QXp3r` Order Fortisips (MedSafe - Medication)
+  - `6h7FMH9hXFmw5cmg` Order more Fortisips (Theme 12-02-2026 Cloud Storage / Google AI)
+- **Cancel Google subscriptions**
+  - `6h7FXvgv6h2Q2r4V` Cancel Google subscriptions (Tasks 3)
+  - `6h7Fg9Wjq8Rmgv3j` Cancel subscriptions (Tasks 4)
+- **Nose reconstruct email follow up**
+  - `6h7FRwgg6RGQQF7V` Nose reconstruct email follow up (Tasks 3)
+  - `6h7FVGV4Ff29233V` Nose reconstruct follow up (Tasks 3)
+- **Guitar and amp in studio**
+  - `6h7F875F3QJGJJQF` Guitar and amp in studio (Building Up My Body (Morley Studio))
+  - `6h7FgwGcR274vw3j` Guitar and amp in shed (Tasks 4)
+- **Air conditioning for gym**
+  - `6h7F8MjVjvPP283F` Air conditioning for gym (Tasks 6)
+  - `6h7F8qQwrc5MPrfm` Air conditioning for gym (Tasks 6)
+  - `6h7FPGmhGM2vFHH9` Air conditioning for Toop gym (Follow Up Today)
+- **Write to Substack**
+  - `6h7F8955XfrJ6RGm` Write to Substack (Tasks 6)
+  - `6h7FH7qRc72QPvx2` Write on Substack (Tasks 7)
+- **Become Super Admin for HubSpot**
+  - `6h7F8GG7g762f9XF` Become Super Admin for HubSpot (Tasks 6)
+  - `6h7FV7GjGxF5wFRF` Become super admin of HubSpot (MAIN GOALS (also in ClickUp))
+- **Marketing copy note: "No transport costs"**
+  - `6h7F8rgHHRj4MQqP` Marketing copy note: "No transport costs" (High Priority - Reminders)
+  - `6h7FfcHWPCGFPWhC` Marketing copy: "No transport costs" (Tasks 4)
+- **Marketing copy note: "Transport behind your ute"**
+  - `6h7F8rmC6Cp26WxP` Marketing copy note: "Transport behind your ute" (High Priority - Reminders)
+  - `6h7FfcJ56FJQ6mWj` Marketing copy: "Transport behind your ute" (Tasks 4)
+- **Fredella Ferguson (follow up)**
+  - `6h7FFHMR5r4H6XW2` Fredella Ferguson (follow up) (Big Whales - Optimism/Drive/Purpose)
+  - `6h7FRwV7WP7hmVg3` Fredella Fergusson follow up (Tasks 3)
+- **Invoices for Sarah**
+  - `6h7FFvjmcXFwPVfR` Invoices for Sarah (Tasks 7)
+  - `6h7Fcx658m93rxCw` Invoices for Sarah (Action First Thing 02)
+  - `6h7Jhrp6WJxM3h57` Invoices for Sarah (Inbox)
+  - `6h7FG8w6rH4qHV4R` Invoices to Sarah (Tasks 7)
+- **Spotify on Dad's phone**
+  - `6h7FGhjcQ26G9qcR` Spotify on Dad's phone (Tasks 7)
+  - `6h7FXfqmQ6rppWMF` Spotify for Dad's phone (Action first thing)
+- **Grow my fingernails**
+  - `6h7FMm298VmFp3C9` Grow my fingernails (Follow Up Today)
+  - `6h7Fc8x2r9VXCVCF` Grow fingernails (Action first thing)
+- **Prescription logistics (private)**
+  - `6h7FHpRhGwX8HV6w` Prescription logistics (private) (Tasks 8)
+  - `6h7FXx5XpjwVXvgF` Prescription repeat logistics (private) (Action first thing)
+  - `6h7Fc6H3mg8RjFQm` Prescription pickup logistics (private) (Action first thing)
