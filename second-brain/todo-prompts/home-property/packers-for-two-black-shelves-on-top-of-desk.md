@@ -1,0 +1,43 @@
+# Packers for two black shelves on top of desk
+
+| Field | Value |
+|---|---|
+| Todoist | [6h7FMXWVC382h4Rg](https://app.todoist.com/app/task/6h7FMXWVC382h4Rg) |
+| Project | Theme 12-02-2026 Cloud Storage / Google AI |
+| Priority | p4 |
+| Due | 2026-02-07 |
+| Category | Home, property and studio |
+| PARA home | `20_Areas/Toop-Street-Property or 20_Areas/Morley-Studio` |
+| Sensitivity | normal |
+
+## As captured
+Packers for two black shelves on top of desk
+
+
+## Context
+Toop Street and Morley Studio are long-running Areas with occasional Projects inside them. Done is physical: something installed, moved, booked or drawn.
+
+## Prompt (paste into Claude, ChatGPT or an agent run)
+```text
+This is a home, property or studio item:
+Task: Packers for two black shelves on top of desk
+Notes: (none)
+From Todoist project: Theme 12-02-2026 Cloud Storage / Google AI. Due: 2026-02-07.
+
+1. Restate as a single outcome ("done means ...").
+2. Break into 3 to 6 physical steps, each under 12 words, verb first.
+3. List materials, tools, measurements or contacts needed; mark unknowns [MEASURE] or [ASK].
+4. Estimate time and cost band (under 1 hour / half day / full day / multi-day; under $100 / $100 to $500 / $500 plus).
+5. Say whether it needs council, a tradesperson, a neighbour or Dad, and who to talk to first.
+6. PARA home: 20_Areas/Toop-Street-Property or 20_Areas/Morley-Studio, or 10_Projects/2026-02_toop-street-alterations if it is part of the alterations project.
+```
+
+## Next steps
+1. Due date 2026-02-07 has passed: reschedule or archive at the next review.
+2. Take a photo and a measurement; drop both in 00_Inbox.
+3. Decide: DIY this weekend, or get a quote.
+4. Add to the Toop or Morley project README as a next action.
+
+## Session suggestion
+Run this together with the other items in `todo-prompts/home-property/` (one Claude Code
+session per category, oldest first). Related agent: see `second-brain/agents/README.md`.
