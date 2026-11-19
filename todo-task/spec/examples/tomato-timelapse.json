@@ -11,17 +11,17 @@
   "brief": {
     "title": "Plan a 30-Day Tomato Time-Lapse Video: Set Up the Shoot and Shape the Video Ideas",
     "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas.",
-    "status": "Waiting for the start date and the camera position.",
+    "status": "Waiting for the start date and the camera position. No dates have been supplied yet.",
     "calendar_date": "Not supplied",
     "context_heading": "Video Context",
     "context": [
       "I would like to make a time-lapse video of tomatoes growing in my garden over 30 days. My phone will sit on a tripod so that every frame is taken from the same position.",
-      "I want the finished video to have music. The track is Not supplied.",
+      "I want the finished video to have music.",
       "This could be one video or the start of something more (to confirm)."
     ],
     "actions": [
       "Next action: Choose the tripod position and take one test photo.",
-      "Decide the start date. No dates have been supplied yet.",
+      "Decide the start date.",
       "Say what kind of music I have in mind.",
       "Use the supplied information to prepare a one-page shoot plan and three video ideas."
     ],
@@ -39,6 +39,6 @@
   },
   "writeback": {
     "title": "Plan a 30-day tomato time-lapse video",
-    "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas. Status: Waiting for the start date and the camera position. Next action: Choose the tripod position and take one test photo."
+    "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas. Status: Waiting for the start date and the camera position. No dates have been supplied yet. Next action: Choose the tripod position and take one test photo."
   }
 }

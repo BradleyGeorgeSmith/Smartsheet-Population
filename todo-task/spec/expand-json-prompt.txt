@@ -6,7 +6,7 @@ RULES
 
 1. Stay with the motive of the entry. Fix grammar and spelling and expand what was clearly meant. Do not swap in a different, tidier idea. Keep anything the owner asked for by name, such as a format, a tool or a number of items.
 
-2. Invent nothing: no facts, names, dates, numbers or results, and no people, groups or places the owner did not mention, even unnamed ones. Do not state what the owner has or has not done, owns or believes beyond what was written. Unknown things are written as "Not supplied" or listed once in the actions as information needed. The status says what is true now.
+2. Invent nothing: no facts, names, dates, numbers or results, and no people, groups or places the owner did not mention, even unnamed ones. Do not state what the owner has or has not done, owns or believes beyond what was written. Unknown things are written as "Not supplied" or listed in the actions as information needed. Say that a thing is not supplied only once. The status says what is true now.
 
 3. Where the entry is unclear, give your best reading in a short sentence and put "(to confirm)" straight after it, every time that reading appears, including in the title and the write-back. A link you add between two of the owner's sentences, such as "so" or "because", is also a guess. Do not draw conclusions from a guess.
 
@@ -16,19 +16,19 @@ RULES
 
 6. Health topics: organise information and questions for the clinician. No diagnosis and no advice on treatment, medicines, supplements or doses. Do not assume the owner has a clinician, and do not turn something the owner said they will do into a question of whether to do it.
 
-7. Keep the outcome simple and effective. It will usually be a piece of writing, a plan, video ideas or learning notes. Name it once in the description after "Outcome:", and use the same words in the last action and in plan.output. If the outcome rests on something that was not written, mark it "(to confirm)". Do not carry over the example's subject, deliverables or steps.
+7. Keep the outcome simple and effective. It will usually be a piece of writing, a plan, video ideas or learning notes. Name it once in the description after "Outcome:", in ten words or fewer, and use the same words in the last action and in plan.output. If the outcome rests on something that was not written, mark it "(to confirm)". Do not carry over the example's subject, deliverables or steps.
 
-8. Write the plan so that Claude Code can act on it. Put the steps Claude can do without the owner first; a step that waits on the owner starts "When I supply". List only the tools, skills, agents and apps that help; every one must lead to something named in plan.output. Do not write bans or limits in the owner's voice. done_when names things that can be shown, such as a file saved or a task added, never a feeling, and everything in it must appear in plan.output. If the entry names a quantity or a format, such as "as many as you can" or "in Excel", put it in plan.output, in a step that does not wait for the owner, and in done_when.
+8. Write the plan so that Claude Code can act on it. Put the steps Claude can do without the owner first; a step that waits on the owner starts "When I supply". List only the tools, skills, agents and apps that help; every one must lead to something named in plan.output. Do not write bans or limits in the owner's voice. done_when names things that can be shown, such as a file saved or a task added, never a feeling. Everything it names must come from plan.output; it may add that the output lists what still waits on the owner. If the entry names a quantity or a format, such as "as many as you can" or "in Excel", put it in plan.output, in a step that does not wait for the owner, and in done_when.
 
-9. A simple errand (buy, pay, book, call, reply) gets a short brief. The title and the first action are the errand itself. Write one context paragraph and two or three actions. Set plan.output to "No Claude session needed", plan.steps to ["None"] and plan.tools to "None". What was not written down may be something the owner already knows, so do not say the owner is waiting on it.
+9. A simple errand (buy, pay, book, call, reply) gets a short brief. The title and the first action are the errand itself. Write one context paragraph and two or three actions. Set plan.output to "No Claude session needed", plan.steps to ["None"], plan.tools to "None" and plan.done_when to "The task is ticked off." Two steps of one errand joined by "and" are one errand. What was not written down may be something the owner already knows, so do not say the owner is waiting on it. A health entry that is only something the owner will do or buy is an errand in this sense: keep task_type "health" and add nothing about a clinician.
 
-10. An entry that cannot be read with confidence gets a brief that is just as short. Set task_type to "unclear". The first action is "Next action: Confirm what I meant by" followed by the unclear words. Set plan.output to "No Claude session needed until I confirm the reading", plan.steps to ["None"] and plan.tools to "None". In every other case, the first action is the first thing the owner really has to do or supply, not a request to confirm your reading.
+10. An entry that cannot be read with confidence gets a brief that is just as short. Set task_type to "unclear". The first action is "Next action: Confirm what I meant by" followed by the unclear words. Set plan.output to "No Claude session needed until I confirm what I meant", plan.steps to ["None"], plan.tools to "None" and plan.done_when to "I have confirmed what I meant." In every other case except rule 5, the first action is the first thing the owner really has to do or supply, not a request to confirm your reading.
 
 11. A reflection, a feeling or a note to self that asks for nothing also gets a short brief. Set task_type to "reflection". Keep the thought in the context in the owner's words, tidied but not softened, explained or answered. The first action is "Next action: Decide whether this needs anything done". Set plan.output to "No Claude session needed", plan.steps to ["None"] and plan.tools to "None".
 
 12. calendar_date is a real date or exactly "Not supplied". Use a date that appears in the entry or notes. If the entry uses a word such as "tomorrow", work the date out from the capture date below and add "(to confirm)". Never guess.
 
-13. Keep the brief about as long as the example. Ask the owner for at most three things.
+13. Keep the brief about as long as the example. Ask the owner for at most three things, and only for what the outcome cannot be produced without. If the entry already gives everything, ask for nothing: write the next action and the final action that says what to produce, and no step that starts "When I supply".
 
 JSON SHAPE
 
@@ -39,9 +39,9 @@ JSON SHAPE
     "description": "One or two sentences, then 'Outcome: ...'.",
     "status": "Usually 'Waiting for ...' or 'Ready to start.'",
     "calendar_date": "A date from the entry, or 'Not supplied'",
-    "context_heading": "A topic word and 'Context', for example 'Video Context'",
+    "context_heading": "A topic of one to three words and 'Context', for example 'Video Context'",
     "context": ["1 to 4 short first-person paragraphs"],
-    "actions": ["3 to 6 items (2 or 3 for an errand), with no numbers. Item 1 starts 'Next action:'. The last item says what to produce from the information."],
+    "actions": ["2 to 6 items, with no numbers. Item 1 starts 'Next action:'. The last item says what to produce from the information."],
     "plan": {
       "output": "What will exist when the work is done, in the same words as the outcome.",
       "steps": ["1 to 6 ordered steps, with no numbers"],
