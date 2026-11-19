@@ -1,0 +1,1239 @@
+<title>ToDo Task Builder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of paper sheets, one sheet per stage of a task. The raw entry is set in
+   typewriter type; the brief is a page marked with a yellow highlighter, as it is in Word. */
+:root {
+  --paper: #F1F4F7; --sheet: #FFFFFF; --ink: #17212B; --muted: #566370; --rule: #D3DAE1;
+  --accent: #1F4E79; --on-accent: #FFFFFF; --field: #F8FAFB;
+  --mark: #FFF27A; --mark-edge: #C9A800; --go: #C9F7D3; --go-edge: #2A8F47;
+  --warn: #8A4A00; --bad: #A32420; --good: #1B7438;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #10151A; --sheet: #192028; --ink: #E6EBEF; --muted: #9BA8B4; --rule: #2C3742;
+    --accent: #8FBCE8; --on-accent: #0D1620; --field: #141A21;
+    --mark: #4D4410; --mark-edge: #E3C636; --go: #173F25; --go-edge: #5BCB7C;
+    --warn: #F0AA60; --bad: #F2918C; --good: #72D391; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #10151A; --sheet: #192028; --ink: #E6EBEF; --muted: #9BA8B4; --rule: #2C3742;
+  --accent: #8FBCE8; --on-accent: #0D1620; --field: #141A21;
+  --mark: #4D4410; --mark-edge: #E3C636; --go: #173F25; --go-edge: #5BCB7C;
+  --warn: #F0AA60; --bad: #F2918C; --good: #72D391; color-scheme: dark;
+}
+
+body { background: var(--paper); color: var(--ink); font: 16px/1.5 var(--body); }
+.page {
+  max-width: 44rem; margin: 0 auto; display: grid; gap: 1.25rem;
+  padding-block: 1.25rem 3.5rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+h1 { font: 700 1.9rem/1.1 var(--display); letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font: 700 1.2rem/1.2 var(--display); text-wrap: balance; }
+.lede { color: var(--muted); max-width: 34rem; }
+.top { display: grid; gap: 0.6rem; }
+
+.rail { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.rail li {
+  font-size: 0.8rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px;
+  border: 1px solid var(--rule); color: var(--muted); background: var(--sheet);
+}
+.rail li.past { color: var(--ink); border-color: var(--accent); }
+.rail li.now { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+.sheet {
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 1.1rem; display: grid; gap: 0.9rem; min-width: 0;
+}
+.step { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); }
+.head { display: grid; gap: 0.15rem; }
+.hint { color: var(--muted); font-size: 0.92rem; }
+
+label { font-weight: 600; font-size: 0.92rem; display: grid; gap: 0.3rem; }
+textarea, input[type="text"], select {
+  font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 0.6rem 0.7rem; width: 100%; box-sizing: border-box; min-width: 0;
+}
+textarea { resize: vertical; line-height: 1.45; }
+#entry { font-family: var(--mono); font-size: 0.95rem; min-height: 6.5rem; }
+:is(textarea, input, select, button, summary, a):focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.btn {
+  font: 600 0.95rem var(--body); min-height: 44px; padding: 0.5rem 1rem; border-radius: 8px;
+  border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.quiet { border-color: transparent; color: var(--accent); padding-inline: 0.4rem; }
+.btn[disabled] { opacity: 0.55; cursor: default; }
+.btn.link { display: inline-flex; align-items: center; text-decoration: none; }
+.note { font-size: 0.92rem; color: var(--muted); }
+.note.bad { color: var(--bad); } .note.good { color: var(--good); } .note.warn { color: var(--warn); }
+.tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.1rem 0.45rem; border-radius: 4px; border: 1px solid var(--rule); color: var(--muted);
+}
+
+/* the brief: a marked-up page */
+.brief { border-left: 4px solid var(--mark-edge); padding-left: 0.9rem; display: grid; gap: 0.6rem; min-width: 0; }
+.brief p { overflow-wrap: anywhere; }
+.brief mark {
+  background: var(--mark); color: var(--ink); padding: 0.12em 0.2em; border-radius: 2px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.brief .rules { font-size: 0.86rem; }
+.brief .title { font: 700 1.25rem/1.3 var(--display); }
+.brief .heading { font-weight: 700; margin-top: 0.3rem; }
+.brief .item { padding-left: 1.4rem; text-indent: -1.4rem; }
+.raw {
+  font-family: var(--mono); font-size: 0.88rem; background: var(--field); border-left: 4px solid var(--accent);
+  padding: 0.6rem 0.75rem; border-radius: 0 6px 6px 0; overflow-wrap: anywhere; white-space: pre-wrap;
+}
+.checks { color: var(--warn); font-size: 0.9rem; padding-left: 1.1rem; display: grid; gap: 0.15rem; }
+.form { display: grid; gap: 0.75rem; }
+.pair { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.count { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count.over { color: var(--bad); font-weight: 600; }
+.confirm { border: 1px solid var(--warn); border-radius: 8px; padding: 0.7rem; display: grid; gap: 0.6rem; }
+
+.list { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+.list li {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.2rem 0.75rem; align-items: center;
+  border: 1px solid var(--rule); border-radius: 8px; padding: 0.6rem 0.75rem;
+}
+.list .name { font-weight: 600; overflow-wrap: anywhere; }
+.list .meta { grid-column: 1; font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+.list .act { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 0.4rem; align-items: center; }
+.chip { font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; border: 1px solid var(--rule); white-space: nowrap; }
+.chip[data-stage="Briefed"] { background: var(--mark); border-color: var(--mark-edge); }
+.chip[data-stage="In session"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[data-stage="Waiting on me"] { border-color: var(--warn); color: var(--warn); }
+.chip[data-stage="Done"] { background: var(--go); border-color: var(--go-edge); }
+.empty { border: 1px dashed var(--rule); border-radius: 8px; padding: 0.9rem; color: var(--muted); }
+details > summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--accent); }
+details[open] > summary { margin-bottom: 0.6rem; }
+a { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: opacity 0.15s; } }
+</style>
+
+<div class="page">
+  <header class="top">
+    <h1>ToDo Task Builder</h1>
+    <p class="lede">Type a short To Do entry. Get back a full brief, a Word document, the text for your task list, and a prompt that starts the work in Claude Code.</p>
+    <ol class="rail" id="rail" aria-label="Stage of this task"></ol>
+  </header>
+
+  <section class="sheet" id="capture" aria-labelledby="capture-h">
+    <div class="head"><span class="step">Step 1</span><h2 id="capture-h">Your To Do entry</h2>
+      <p class="hint">Paste it exactly as you captured it. Short, misspelt and half-finished is fine.</p></div>
+    <label for="entry">Entry
+      <textarea id="entry" placeholder="garden timelapse vid?? 30 days tomatoes.. phone on tripod.. music" autocomplete="off"></textarea>
+    </label>
+    <details id="notes-box">
+      <summary>Add what is already in the task’s notes</summary>
+      <label for="notes">Notes on the task
+        <textarea id="notes" rows="3" autocomplete="off"></textarea>
+      </label>
+    </details>
+    <div class="row">
+      <button class="btn primary" id="expand" type="button">Expand into a brief</button>
+      <button class="btn" id="stop" type="button" hidden>Stop</button>
+      <button class="btn" id="pull" type="button" hidden>Pull from Todoist</button>
+      <button class="btn quiet" id="fresh" type="button">Start a new entry</button>
+    </div>
+    <p class="note" id="capture-note" role="status"></p>
+    <div id="picker" hidden>
+      <p class="hint">New tasks from the last 14 days that have no brief yet. Choose one to load it above.</p>
+      <ul class="list" id="picker-list"></ul>
+    </div>
+    <div id="manual" hidden>
+      <p class="hint">Claude cannot be reached from this view. Copy the request into any Claude chat, then paste Claude’s reply here.</p>
+      <div class="row"><button class="btn" id="copy-request" type="button">Copy the request</button></div>
+      <label for="manual-reply">Claude’s reply
+        <textarea id="manual-reply" rows="4" autocomplete="off"></textarea>
+      </label>
+      <div class="row"><button class="btn" id="manual-use" type="button">Build the brief from this reply</button></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="brief" aria-labelledby="brief-h">
+    <div class="head"><span class="step">Step 2</span><h2 id="brief-h">The brief</h2>
+      <p class="hint" id="brief-hint">Read it through. Fix anything marked (to confirm), then use it.</p></div>
+    <div class="raw" id="brief-entry"></div>
+    <div class="brief" id="brief-view"></div>
+    <ul class="checks" id="checks" hidden></ul>
+    <div class="row">
+      <button class="btn primary" id="copy-brief" type="button">Copy the brief for Claude Code</button>
+      <button class="btn" id="word" type="button">Save as a Word document</button>
+      <button class="btn" id="edit" type="button">Edit</button>
+      <button class="btn quiet" id="again" type="button">Try again</button>
+    </div>
+    <p class="note" id="brief-note" role="status"></p>
+    <form class="form" id="edit-form" hidden>
+      <label for="f-title">Title <input type="text" id="f-title"></label>
+      <label for="f-description">Description <textarea id="f-description" rows="3"></textarea></label>
+      <div class="pair">
+        <label for="f-status">Status <input type="text" id="f-status"></label>
+        <label for="f-date">Calendar date <input type="text" id="f-date"></label>
+      </div>
+      <label for="f-heading">Context heading <input type="text" id="f-heading"></label>
+      <label for="f-context">Context, one paragraph per block <textarea id="f-context" rows="7"></textarea></label>
+      <label for="f-actions">Information needed and next actions, one per line <textarea id="f-actions" rows="6"></textarea></label>
+      <label for="f-output">Output <textarea id="f-output" rows="2"></textarea></label>
+      <label for="f-steps">Steps, one per line <textarea id="f-steps" rows="4"></textarea></label>
+      <label for="f-tools">Tools, skills and apps <textarea id="f-tools" rows="2"></textarea></label>
+      <div class="pair">
+        <label for="f-rhythm">Rhythm <input type="text" id="f-rhythm"></label>
+        <label for="f-done">Done when <input type="text" id="f-done"></label>
+      </div>
+      <div class="row">
+        <button class="btn primary" type="submit">Save changes</button>
+        <button class="btn" type="button" id="edit-cancel">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="sheet" id="writeback" aria-labelledby="writeback-h">
+    <div class="head"><span class="step">Step 3</span><h2 id="writeback-h">Write back to your task list</h2>
+      <p class="hint">The task gets a proper title and description. Your original entry is kept underneath.</p></div>
+    <label for="w-title">Title <span class="count" id="w-title-count"></span>
+      <input type="text" id="w-title"></label>
+    <label for="w-description">Description <span class="count" id="w-description-count"></span>
+      <textarea id="w-description" rows="5"></textarea></label>
+    <div class="row">
+      <button class="btn" id="copy-title" type="button">Copy title</button>
+      <button class="btn" id="copy-description" type="button">Copy description</button>
+      <button class="btn primary" id="todoist-write" type="button" hidden>Update the task in Todoist</button>
+    </div>
+    <div class="confirm" id="todoist-confirm" hidden>
+      <p id="todoist-confirm-text"></p>
+      <div class="row">
+        <button class="btn primary" id="todoist-yes" type="button">Yes, do it</button>
+        <button class="btn" id="todoist-no" type="button">Cancel</button>
+      </div>
+    </div>
+    <p class="note" id="writeback-note" role="status"></p>
+  </section>
+
+  <section class="sheet" id="session" aria-labelledby="session-h">
+    <div class="head"><span class="step">Step 4</span><h2 id="session-h">Start the work in Claude Code</h2>
+      <p class="hint">The brief is the whole instruction. Claude works out the tools and agents, does what does not depend on you, and reports with evidence.</p></div>
+    <div class="row">
+      <button class="btn primary" id="start" type="button" hidden>Start a Claude Code session</button>
+      <button class="btn" id="copy-brief-2" type="button">Copy the brief</button>
+      <a class="btn link" id="open-code" href="https://claude.ai/code/new" target="_blank" rel="noopener">Open Claude Code with this brief</a>
+    </div>
+    <p class="hint">The link opens a new session with the brief already typed in. If the box is empty when it opens, copy the brief and paste it.</p>
+    <p class="note" id="session-note" role="status"></p>
+    <details id="session-settings">
+      <summary>Session settings</summary>
+      <div class="form">
+        <label for="s-env">Environment <select id="s-env"><option value="">Choose when you first start a session</option></select></label>
+        <label for="s-repo">Repository, as owner/name (optional) <input type="text" id="s-repo" placeholder="owner/repository" autocomplete="off"></label>
+        <label for="s-model">Model <input type="text" id="s-model" autocomplete="off"></label>
+      </div>
+    </details>
+    <label for="stage">Stage of this task
+      <select id="stage"></select>
+    </label>
+  </section>
+
+  <section class="sheet" id="tasks" aria-labelledby="tasks-h">
+    <div class="head"><span class="step">Your tasks</span><h2 id="tasks-h">Every entry you have expanded</h2>
+      <p class="hint" id="tasks-hint">Briefs are saved here so nothing is left as a one-line entry.</p></div>
+    <div class="empty" id="tasks-empty">No briefs yet. Expand your first entry in step 1 and it will be listed here with its stage.</div>
+    <ul class="list" id="tasks-list" hidden></ul>
+  </section>
+
+  <textarea id="copy-fallback" rows="6" hidden aria-label="Text to copy" readonly></textarea>
+</div>
+
+<script>
+const SPEC = {
+ "rules": "Working rules for Claude: Treat this brief as the complete instruction for this session. Stay with the motive of my original entry; do not swap it for a different idea. Work out which tools, skills, agents and loops are needed, then start on every step that does not depend on me. Keep the outcome simple and effective: a piece of writing, a plan, video ideas or learning notes. Do not contact anyone, post anything or spend money on my behalf unless this brief asks for it. If the plan says no Claude session is needed, confirm that and stop. Report what was actually done instead of claiming that an action was completed. End each update with: Completed; Waiting on; Next action; and Completion evidence. Retain relevant decisions and lessons in the brief so future work builds on existing context. For health-related tasks, organise information and questions for the clinician without diagnosing or recommending treatment.",
+ "green": [
+  "Expand my To Do entry into a full task brief, here in this document.",
+  "1. Read the paragraph under \"1 · Original To Do entry\". It is my raw capture. It may be short, misspelt or hard to follow. Do not edit or delete it.",
+  "2. Rewrite everything between the lines \"TASK BRIEF STARTS\" and \"TASK BRIEF ENDS\" (the yellow section) so that it is about this entry. The text there now is only a model for structure, length and tone. Replace all of its content, and do not carry over its subject, its deliverables or its steps. Keep the paragraph that starts \"Working rules for Claude:\" word for word.",
+  "3. Keep these parts, in this order: a title that starts with an action word; one line with Description, Status and Calendar date (a real date, or exactly \"Not supplied\"); a heading made of a topic word and \"Context\" (as in \"Video Context\"), followed by two to four short paragraphs; \"Information Needed and Next Actions\" as a numbered list of three to six items, where item 1 starts with \"Next action:\" and the last item says what to produce; \"Execution Plan for Claude\" with Output, Steps, Tools, skills and apps, Rhythm, and Done when; and a last line \"Original entry (word for word):\" followed by my entry copied exactly, mistakes included.",
+  "4. Stay with the motive of my entry. Fix grammar and spelling and expand what I clearly meant. Do not invent facts, names, dates, numbers or results, or people, groups and places I did not mention. Do not state what I have or have not done, own or believe beyond what I wrote. Where something is unknown, write \"Not supplied\" or list it once under Information Needed. Status says what is true now.",
+  "5. Where the entry is unclear, give your best reading in a short sentence and put \"(to confirm)\" straight after it, every time that reading appears, including in the title and the write-back. A link you add between two of my sentences, such as \"so\" or \"because\", is also a guess. Do not draw conclusions from a guess.",
+  "6. Write the Context as me. \"I\" is always me: never write about \"my entry\", \"this brief\", your reading or your assumptions. Use short sentences. Do not add words about how I should behave or feel, such as respectful, proper or comfortable, and do not add cautions or limits I did not write.",
+  "7. If the entry holds several separate ideas, build the brief around the main one. If I did not make clear which is the main one, make item 1 \"Next action: Confirm that [idea] is the main idea\". List the other ideas in one item, as short quoted phrases to capture separately, with no commentary.",
+  "8. Rewrite the idea so that Claude Code can act on it. Name the outcome once in the Description after \"Outcome:\", and use the same words in the last item and in Output. It will usually be a piece of writing, a plan, video ideas or learning notes. Keep anything I asked for by name, such as a format or a tool. Put the steps Claude can do without me first; a step that waits on me starts \"When I supply\". List only the tools, skills and apps that help. Done when names things that can be shown, such as a file saved or a task added, and everything in it must appear in Output. If my entry names a quantity or a format, such as \"as many as you can\" or \"in Excel\", put it in Output, in a step that does not wait for me, and in Done when.",
+  "9. If the entry is a simple errand (buy, pay, book, call, reply), keep the brief short. The title and item 1 are the errand itself. Write one Context paragraph and two or three actions. The Execution Plan says \"No Claude session needed\", with \"None\" under Steps and under Tools, skills and apps. What I did not write down may be something I already know, so do not say that I am waiting on it.",
+  "10. If the entry cannot be read with confidence, keep the brief just as short. Item 1 is \"Next action: Confirm what I meant by\" followed by the unclear words, and the Execution Plan says \"No Claude session needed until I confirm the reading\". In every other case, item 1 is the first thing I really have to do or supply, not a request to confirm your reading. A reflection or a note to self that asks for nothing gets the same short brief: keep my thought as I wrote it, tidied but not softened or answered, with item 1 \"Next action: Decide whether this needs anything done\" and \"No Claude session needed\".",
+  "11. For health topics, organise information and questions for the clinician; do not diagnose or recommend treatment. Do not assume I have a clinician, and do not turn something I said I will do into a question of whether to do it.",
+  "12. Keep the brief about as long as the model: roughly 400 words after the Working rules paragraph. Ask me for at most three things.",
+  "13. Fill \"4 · To Do write-back\": a Title of at most 90 characters (the brief's title, shortened if needed) and a Description of at most 600 characters in plain text that repeats the brief's Description, Status and item 1 without changing what they say.",
+  "14. Keep the yellow highlight on the brief. Change nothing else in the document. When you finish, tell me in the chat only what you marked \"(to confirm)\" and what you need from me."
+ ],
+ "expand": "You turn one short To Do entry into a task brief. Reply with one JSON object and nothing else.\n\nThe entry is a raw capture typed on a phone. It may be short, misspelt or hard to follow. Work only from the entry and the notes given below. You know nothing else about its owner.\n\nRULES\n\n1. Stay with the motive of the entry. Fix grammar and spelling and expand what was clearly meant. Do not swap in a different, tidier idea. Keep anything the owner asked for by name, such as a format, a tool or a number of items.\n\n2. Invent nothing: no facts, names, dates, numbers or results, and no people, groups or places the owner did not mention, even unnamed ones. Do not state what the owner has or has not done, owns or believes beyond what was written. Unknown things are written as \"Not supplied\" or listed once in the actions as information needed. The status says what is true now.\n\n3. Where the entry is unclear, give your best reading in a short sentence and put \"(to confirm)\" straight after it, every time that reading appears, including in the title and the write-back. A link you add between two of the owner's sentences, such as \"so\" or \"because\", is also a guess. Do not draw conclusions from a guess.\n\n4. Write the context as the owner, in the first person. \"I\" is always the owner: never write about \"my entry\", \"this brief\", your reading or your assumptions. Use short sentences of about 25 words at most. Do not add words about how the owner should behave or feel, such as respectful, proper or comfortable. Do not add reassurance, cautions or limits that were not written. On personal, family, money and faith topics, keep to what was written.\n\n5. If the entry holds several separate ideas, build the brief around the main one. If it is not clear which is the main one, make the first action \"Next action: Confirm that [idea] is the main idea\". List the other ideas in one action, as short quoted phrases to capture separately, with no commentary.\n\n6. Health topics: organise information and questions for the clinician. No diagnosis and no advice on treatment, medicines, supplements or doses. Do not assume the owner has a clinician, and do not turn something the owner said they will do into a question of whether to do it.\n\n7. Keep the outcome simple and effective. It will usually be a piece of writing, a plan, video ideas or learning notes. Name it once in the description after \"Outcome:\", and use the same words in the last action and in plan.output. If the outcome rests on something that was not written, mark it \"(to confirm)\". Do not carry over the example's subject, deliverables or steps.\n\n8. Write the plan so that Claude Code can act on it. Put the steps Claude can do without the owner first; a step that waits on the owner starts \"When I supply\". List only the tools, skills, agents and apps that help; every one must lead to something named in plan.output. Do not write bans or limits in the owner's voice. done_when names things that can be shown, such as a file saved or a task added, never a feeling, and everything in it must appear in plan.output. If the entry names a quantity or a format, such as \"as many as you can\" or \"in Excel\", put it in plan.output, in a step that does not wait for the owner, and in done_when.\n\n9. A simple errand (buy, pay, book, call, reply) gets a short brief. The title and the first action are the errand itself. Write one context paragraph and two or three actions. Set plan.output to \"No Claude session needed\", plan.steps to [\"None\"] and plan.tools to \"None\". What was not written down may be something the owner already knows, so do not say the owner is waiting on it.\n\n10. An entry that cannot be read with confidence gets a brief that is just as short. Set task_type to \"unclear\". The first action is \"Next action: Confirm what I meant by\" followed by the unclear words. Set plan.output to \"No Claude session needed until I confirm the reading\", plan.steps to [\"None\"] and plan.tools to \"None\". In every other case, the first action is the first thing the owner really has to do or supply, not a request to confirm your reading.\n\n11. A reflection, a feeling or a note to self that asks for nothing also gets a short brief. Set task_type to \"reflection\". Keep the thought in the context in the owner's words, tidied but not softened, explained or answered. The first action is \"Next action: Decide whether this needs anything done\". Set plan.output to \"No Claude session needed\", plan.steps to [\"None\"] and plan.tools to \"None\".\n\n12. calendar_date is a real date or exactly \"Not supplied\". Use a date that appears in the entry or notes. If the entry uses a word such as \"tomorrow\", work the date out from the capture date below and add \"(to confirm)\". Never guess.\n\n13. Keep the brief about as long as the example. Ask the owner for at most three things.\n\nJSON SHAPE\n\n{\n  \"task_type\": one of \"content\", \"plan\", \"learning\", \"idea\", \"health\", \"errand\", \"appointment\", \"purchase\", \"person\", \"reflection\", \"unclear\",\n  \"brief\": {\n    \"title\": \"Starts with an action word. 'Verb the thing: scope'. At most 120 characters.\",\n    \"description\": \"One or two sentences, then 'Outcome: ...'.\",\n    \"status\": \"Usually 'Waiting for ...' or 'Ready to start.'\",\n    \"calendar_date\": \"A date from the entry, or 'Not supplied'\",\n    \"context_heading\": \"A topic word and 'Context', for example 'Video Context'\",\n    \"context\": [\"1 to 4 short first-person paragraphs\"],\n    \"actions\": [\"3 to 6 items (2 or 3 for an errand), with no numbers. Item 1 starts 'Next action:'. The last item says what to produce from the information.\"],\n    \"plan\": {\n      \"output\": \"What will exist when the work is done, in the same words as the outcome.\",\n      \"steps\": [\"1 to 6 ordered steps, with no numbers\"],\n      \"tools\": \"Tools, skills, agents and apps. Only what helps.\",\n      \"rhythm\": \"One-off, or how often to come back to it.\",\n      \"done_when\": \"Things that can be shown as completion evidence.\"\n    }\n  },\n  \"writeback\": {\n    \"title\": \"The title shortened to at most 90 characters.\",\n    \"description\": \"At most 600 characters of plain text: the description, the status and the first action, repeated without changing what they say.\"\n  }\n}\n\nEXAMPLE\n\nEntry: {{EXAMPLE_ENTRY}}\n\nJSON:\n{{EXAMPLE_JSON}}\n\nTHE ENTRY TO EXPAND\n\nThe entry was captured on: {{TODAY}}\n\nEntry: <<<{{ENTRY}}>>>\n\nNotes already on the task: <<<{{NOTES}}>>>",
+ "example": {
+  "entry": {
+   "text": "garden timelapse vid?? 30 days tomatoes.. phone on tripod.. music",
+   "notes": "",
+   "source": "Microsoft To Do",
+   "list": "Tasks",
+   "task_id": "",
+   "captured_on": "",
+   "labels": []
+  },
+  "task_type": "content",
+  "brief": {
+   "title": "Plan a 30-Day Tomato Time-Lapse Video: Set Up the Shoot and Shape the Video Ideas",
+   "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas.",
+   "status": "Waiting for the start date and the camera position.",
+   "calendar_date": "Not supplied",
+   "context_heading": "Video Context",
+   "context": [
+    "I would like to make a time-lapse video of tomatoes growing in my garden over 30 days. My phone will sit on a tripod so that every frame is taken from the same position.",
+    "I want the finished video to have music. The track is Not supplied.",
+    "This could be one video or the start of something more (to confirm)."
+   ],
+   "actions": [
+    "Next action: Choose the tripod position and take one test photo.",
+    "Decide the start date. No dates have been supplied yet.",
+    "Say what kind of music I have in mind.",
+    "Use the supplied information to prepare a one-page shoot plan and three video ideas."
+   ],
+   "plan": {
+    "output": "A one-page shoot plan and three video ideas.",
+    "steps": [
+     "Draft the shoot plan from what is known and mark every gap.",
+     "Write three video ideas, each with a title and an opening line.",
+     "When I supply the start date and the camera position, add them to the shoot plan."
+    ],
+    "tools": "Word for the shoot plan; one writing agent for the video ideas.",
+    "rhythm": "One-off, then a weekly check while the shoot runs.",
+    "done_when": "The shoot plan and the three video ideas are saved, and the plan lists what still waits on me."
+   }
+  },
+  "writeback": {
+   "title": "Plan a 30-day tomato time-lapse video",
+   "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas. Status: Waiting for the start date and the camera position. Next action: Choose the tripod position and take one test photo."
+  }
+ },
+ "how": [
+  "Make a copy of the template for the new task. Never type into the template itself.",
+  "Paste the To Do entry at the top, exactly as you captured it.",
+  "Copy all of the green text into the Claude panel in Word and send it.",
+  "Read the yellow brief. Correct anything marked (to confirm) and add what you know.",
+  "Paste the write-back title and description into the task in Microsoft To Do or Todoist.",
+  "Copy all of the yellow text into a new Claude Code session in the project “Ideas to Contextual Development using ToDo, Word and Claude”.",
+  "Add a row to the progress log for every update. An update without evidence is not finished."
+ ],
+ "model": "claude-fable-5-2",
+ "project": "Ideas to Contextual Development using ToDo, Word and Claude"
+};
+/* ToDo Task Builder: the parts with no page in them.
+   The same rules as the Python package (todotask/models.py and render.py), so a brief made
+   on the phone and a brief made by the command line are the same brief. */
+
+const Core = (() => {
+  const STAGES = ["Captured", "Briefed", "In session", "Waiting on me", "Done"];
+  const TASK_TYPES = ["content", "plan", "learning", "idea", "health", "errand", "appointment", "purchase", "person", "reflection", "unclear"];
+  const LIMITS = { title: 120, writebackTitle: 90, writebackDescription: 600 };
+  const ACTIONS_HEADING = "Information Needed and Next Actions";
+  const PLAN_HEADING = "Execution Plan for Claude";
+  const ORIGIN_LABEL = "Original entry (word for word):";
+  const NOTES_LABEL = "Notes on the task (word for word):";
+
+  const str = (v) => (typeof v === "string" ? v.trim() : v == null ? "" : String(v).trim());
+  const list = (v) => (Array.isArray(v) ? v.map(str).filter(Boolean) : str(v) ? [str(v)] : []);
+  const stop = (t) => (/[.!?]$/.test(t.trim()) ? t.trim() : t.trim() + ".");
+  // Models sometimes number list items themselves; the page numbers them, so strip a leading "1." or "1)".
+  const unnumber = (t) => t.replace(/^\s*\d{1,2}[.)]\s+/, "");
+
+  /** Coerce whatever came back (from Claude, from storage) into the brief shape. */
+  function normalise(data, entry) {
+    const d = data && typeof data === "object" ? data : {};
+    const b = d.brief && typeof d.brief === "object" ? d.brief : {};
+    const p = b.plan && typeof b.plan === "object" ? b.plan : {};
+    const w = d.writeback && typeof d.writeback === "object" ? d.writeback : {};
+    const e = entry || d.entry || {};
+    return {
+      entry: {
+        text: str(e.text), notes: str(e.notes), source: str(e.source) || "Manual", list: str(e.list),
+        task_id: str(e.task_id), captured_on: str(e.captured_on), labels: list(e.labels),
+      },
+      task_type: TASK_TYPES.includes(d.task_type) ? d.task_type : "idea",
+      brief: {
+        title: str(b.title), description: str(b.description), status: str(b.status),
+        calendar_date: str(b.calendar_date) || "Not supplied",
+        context_heading: str(b.context_heading) || "Context",
+        context: list(b.context), actions: list(b.actions).map(unnumber),
+        plan: {
+          output: str(p.output), steps: list(p.steps).map(unnumber), tools: str(p.tools),
+          rhythm: str(p.rhythm), done_when: str(p.done_when),
+        },
+      },
+      writeback: { title: str(w.title), description: str(w.description) },
+    };
+  }
+
+  /** Everything that breaks the brief structure. Empty means the brief is sound. */
+  function problems(task) {
+    const found = [];
+    const b = task.brief, w = task.writeback;
+    if (!b.title) found.push("The brief has no title.");
+    else if (b.title.length > LIMITS.title) found.push(`The title is ${b.title.length} characters; the limit is ${LIMITS.title}.`);
+    if (!b.description) found.push("The brief has no description.");
+    if (!b.status) found.push("The brief has no status.");
+    if (b.context.length < 1 || b.context.length > 4) found.push(`Context has ${b.context.length} paragraphs; it needs 1 to 4.`);
+    if (b.actions.length < 2 || b.actions.length > 6) found.push(`There are ${b.actions.length} actions; the list needs 2 to 6.`);
+    if (b.actions.length && !/^next action:/i.test(b.actions[0])) found.push("The first action must start with “Next action:”.");
+    if (!b.plan.output) found.push("The execution plan has no Output.");
+    if (!b.plan.steps.length) found.push("The execution plan has no Steps.");
+    if (!b.plan.done_when) found.push("The execution plan has no “Done when”.");
+    if (!w.title) found.push("The write-back has no title.");
+    else if (w.title.length > LIMITS.writebackTitle) found.push(`The write-back title is ${w.title.length} characters; the limit is ${LIMITS.writebackTitle}.`);
+    if (!w.description) found.push("The write-back has no description.");
+    else if (w.description.length > LIMITS.writebackDescription) found.push(`The write-back description is ${w.description.length} characters; the limit is ${LIMITS.writebackDescription}.`);
+    return found;
+  }
+
+  /** The yellow section as [kind, text] pairs, in reading order. */
+  function briefLines(task, rules) {
+    const b = task.brief;
+    const lines = [["rules", rules], ["title", b.title]];
+    lines.push(["meta", `Description: ${b.description} Status: ${b.status} Calendar date: ${stop(b.calendar_date)}`]);
+    lines.push(["heading", b.context_heading]);
+    b.context.forEach((t) => lines.push(["para", t]));
+    lines.push(["heading", ACTIONS_HEADING]);
+    b.actions.forEach((t, i) => lines.push(["item", `${i + 1}. ${t}`]));
+    lines.push(["heading", PLAN_HEADING]);
+    lines.push(["field", `Output: ${b.plan.output}`]);
+    lines.push(["field", "Steps:"]);
+    b.plan.steps.forEach((t, i) => lines.push(["item", `${i + 1}. ${t}`]));
+    lines.push(["field", `Tools, skills and apps: ${b.plan.tools}`]);
+    lines.push(["field", `Rhythm: ${b.plan.rhythm}`]);
+    lines.push(["field", `Done when: ${b.plan.done_when}`]);
+    // The brief is pasted into a session with nothing else attached, so it carries the entry.
+    lines.push(["field", `${ORIGIN_LABEL} ${task.entry.text}`]);
+    if (task.entry.notes) lines.push(["field", `${NOTES_LABEL} ${task.entry.notes}`]);
+    return lines;
+  }
+
+  /** The yellow section as plain text: what is pasted into a Claude Code session. */
+  function briefPrompt(task, rules) {
+    const out = [];
+    for (const [kind, text] of briefLines(task, rules)) {
+      if (kind === "title" || kind === "heading") out.push("", text, "");
+      else if (kind === "item") out.push(text);
+      else out.push(text, "");
+    }
+    return out.join("\n").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+  }
+
+  /** The text for the task's note or description: the new description, then the original. */
+  function writebackNote(task) {
+    const parts = [task.writeback.description, "Original entry: " + task.entry.text];
+    if (task.entry.notes) parts.push("Original notes: " + task.entry.notes);
+    return parts.filter(Boolean).join("\n\n");
+  }
+
+  /** The instruction sent to Claude to expand one entry into brief JSON. */
+  function expandPrompt(spec, entryText, notes, today) {
+    const example = { task_type: spec.example.task_type, brief: spec.example.brief, writeback: spec.example.writeback };
+    const values = {
+      EXAMPLE_ENTRY: spec.example.entry.text, EXAMPLE_JSON: JSON.stringify(example, null, 2),
+      TODAY: today, ENTRY: entryText, NOTES: notes || "None",
+    };
+    // One pass, so an entry that happens to contain "{{NOTES}}" is left exactly as written.
+    return spec.expand.replace(/\{\{(EXAMPLE_ENTRY|EXAMPLE_JSON|TODAY|ENTRY|NOTES)\}\}/g, (_, key) => values[key]);
+  }
+
+  /** "owner/name" from "owner/name" or a GitHub address; empty when it is neither. */
+  function repoName(value) {
+    const m = String(value || "").trim().replace(/\.git$/, "").match(/(?:github\.com[/:])?([\w.-]+\/[\w.-]+)\/?$/);
+    return m ? m[1] : "";
+  }
+
+  /** A link that opens a new Claude Code session with the brief already typed in. */
+  function sessionLink(prompt, repo) {
+    const name = repoName(repo);
+    return "https://claude.ai/code/new?q=" + encodeURIComponent(prompt) + (name ? "&repo=" + encodeURIComponent(name) : "");
+  }
+
+  function slug(text) {
+    const words = (text.toLowerCase().match(/[a-z0-9]+/g) || []).slice(0, 6).join("-").slice(0, 48).replace(/-+$/, "");
+    return words || "task";
+  }
+
+  function splitMeta(text) {
+    const labels = ["Description:", " Status:", " Calendar date:"];
+    const at = labels.map((l) => text.indexOf(l));
+    return labels.map((label, i) => [label, text.slice(at[i] + label.length, i + 1 < at.length ? at[i + 1] : text.length)]);
+  }
+
+  /** Build the Word document with the docx library. Returns a docx.Document. */
+  function buildDocx(docx, task, spec) {
+    const { Document, Paragraph, TextRun, Table, TableRow, TableCell, WidthType, ShadingType, BorderStyle, HeadingLevel, Footer, PageNumber } = docx;
+    const INK = "1F2A37", MUTED = "5B6570", ACCENT = "1F4E79", PANEL = "F3F5F7", RULE = "C5CCD3";
+    const run = (text, o = {}) => new TextRun({ text, size: (o.size || 11) * 2, bold: !!o.bold, italics: !!o.italic, color: o.color || INK,
+      highlight: o.highlight, highlightComplexScript: false }); // the library's extra highlightCs element is not in the Word schema
+    const para = (runs, o = {}) => new Paragraph({
+      children: Array.isArray(runs) ? runs : [runs],
+      spacing: { before: (o.before || 0) * 20, after: (o.after == null ? 6 : o.after) * 20, line: 268 },
+      keepNext: !!o.keepNext, pageBreakBefore: !!o.newPage, indent: o.indent, border: o.border, shading: o.shading,
+      heading: o.heading,
+    });
+    const section = (title, hint, newPage) => {
+      const out = [para(run(title, { size: 13, bold: true, color: ACCENT }), { heading: HeadingLevel.HEADING_2, before: 16, after: 2, keepNext: true, newPage })];
+      if (hint) out.push(para(run(hint, { size: 9.5, italic: true, color: MUTED }), { keepNext: true }));
+      return out;
+    };
+    const edge = (side) => ({ [side]: { style: BorderStyle.SINGLE, size: 6, space: 2, color: RULE } });
+    const cellBorder = { style: BorderStyle.SINGLE, size: 4, color: RULE };
+    const borders = { top: cellBorder, bottom: cellBorder, left: cellBorder, right: cellBorder };
+    const cell = (text, width, o = {}) => new TableCell({
+      width: { size: width, type: WidthType.DXA }, borders,
+      margins: { top: 60, bottom: 60, left: 100, right: 100 },
+      shading: o.fill ? { type: ShadingType.CLEAR, color: "auto", fill: o.fill } : undefined,
+      children: [para(run(text, { size: 10, bold: !!o.bold }), { after: 2 })],
+    });
+    const table = (widths, rows) => new Table({
+      width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA }, columnWidths: widths,
+      rows: rows.map((cells) => new TableRow({ children: cells.map((c, i) => cell(c.text, widths[i], c)) })),
+    });
+    const keyValue = (rows) => table([2040, 7598], rows.map(([k, v]) => [{ text: k, bold: true, fill: PANEL }, { text: v }]));
+
+    const Y = "yellow", G = "green"; // Word shows "green" as Bright Green
+    const kids = [];
+    kids.push(para(run("ToDo Task Brief", { size: 22, bold: true, color: ACCENT }), { after: 2 }));
+    kids.push(para(run("One document for one To Do entry.  To Do → Word → Claude", { size: 10.5, color: MUTED }), { after: 10 }));
+
+    kids.push(...section("1 · Original To Do entry", "Type or paste the entry exactly as you captured it. It is never tidied up here."));
+    kids.push(para(run(task.entry.text, { size: 12 }), {
+      after: 4, indent: { left: 200 }, shading: { type: ShadingType.CLEAR, color: "auto", fill: PANEL },
+      border: { left: { style: BorderStyle.SINGLE, size: 18, space: 8, color: ACCENT } },
+    }));
+    kids.push(para([run("More from the task’s notes (optional): ", { bold: true }), run(task.entry.notes || "None")]));
+
+    kids.push(...section("2 · Expansion prompt (green)", "Copy all of the green text into the Claude panel in Word and send it."));
+    spec.green.forEach((t) => kids.push(para(run(t, { size: 10.5, highlight: G }), { after: 5 })));
+
+    kids.push(...section("3 · Task brief (yellow)", "Claude rewrites this section. When it reads correctly, copy all of the yellow text into a new Claude Code session.", true));
+    kids.push(para(run("▼ TASK BRIEF STARTS", { size: 8.5, bold: true, color: MUTED }), { before: 2, after: 4, keepNext: true, border: edge("bottom") }));
+    for (const [kind, text] of briefLines(task, spec.rules)) {
+      if (kind === "rules") {
+        const cut = text.indexOf(":") + 1;
+        kids.push(para([run(text.slice(0, cut), { size: 10, bold: true, highlight: Y }), run(text.slice(cut), { size: 10, highlight: Y })], { after: 8 }));
+      } else if (kind === "title") kids.push(para(run(text, { size: 14, bold: true, highlight: Y }), { before: 4, keepNext: true }));
+      else if (kind === "meta") kids.push(para(splitMeta(text).flatMap(([l, v]) => [run(l, { bold: true, highlight: Y }), run(v, { highlight: Y })]), { after: 8 }));
+      else if (kind === "heading") kids.push(para(run(text, { size: 12, bold: true, highlight: Y }), { before: 6, after: 4, keepNext: true }));
+      else if (kind === "item") kids.push(para(run(text, { highlight: Y }), { after: 3, indent: { left: 340, hanging: 340 } }));
+      else if (kind === "field") {
+        const cut = text.indexOf(":") + 1;
+        kids.push(para([run(text.slice(0, cut), { bold: true, highlight: Y }), run(text.slice(cut), { highlight: Y })], { after: 4 }));
+      } else kids.push(para(run(text, { highlight: Y })));
+    }
+    kids.push(para(run("▲ TASK BRIEF ENDS", { size: 8.5, bold: true, color: MUTED }), { before: 2, after: 4, border: edge("top") }));
+
+    kids.push(...section("4 · To Do write-back", "Paste these into the task in Microsoft To Do or Todoist. Keep the original entry underneath."));
+    kids.push(keyValue([["Title", task.writeback.title], ["Description", task.writeback.description], ["Original entry", task.entry.text]]));
+
+    kids.push(...section("5 · Progress log", "Add one row for every update. An update without evidence is not finished."));
+    const logWidths = [1247, 2268, 1814, 2041, 2268];
+    kids.push(table(logWidths, [
+      ["Date", "Completed", "Waiting on", "Next action", "Completion evidence"].map((t) => ({ text: t, bold: true, fill: PANEL })),
+      ...[0, 1, 2].map(() => logWidths.map(() => ({ text: "" }))),
+    ]));
+    kids.push(para(run("Decisions and lessons: ", { bold: true }), { before: 8 }));
+
+    kids.push(...section("Task record", "Where this task lives, so the three places stay linked."));
+    kids.push(keyValue([
+      ["Captured on", task.entry.captured_on], ["Source", task.entry.source], ["List or project", task.entry.list],
+      ["Task link or ID", task.entry.task_id], ["Claude session link", task.session_url || ""], ["Stage", task.stage || "Briefed"],
+    ]));
+
+    kids.push(...section("How this document works", ""));
+    spec.how.forEach((t, i) => kids.push(para(run(`${i + 1}. ${t}`, { size: 10.5 }), { after: 3 })));
+
+    return new Document({
+      creator: "ToDo Task", title: task.brief.title, description: "One document for one To Do entry.",
+      styles: {
+        default: {
+          document: { run: { font: "Calibri", size: 22 } },
+          heading2: { run: { font: "Calibri", size: 26, bold: true, color: ACCENT }, paragraph: { spacing: { before: 320, after: 40 }, keepNext: true } },
+        },
+      },
+      sections: [{
+        properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1020, bottom: 1020, left: 1134, right: 1134 } } },
+        footers: { default: new Footer({ children: [new Paragraph({ children: [
+          new TextRun({ text: "ToDo Task  ·  To Do → Word → Claude  ·  page ", size: 17, color: MUTED }),
+          new TextRun({ children: [PageNumber.CURRENT], size: 17, color: MUTED }),
+        ] })] }) },
+        children: kids,
+      }],
+    });
+  }
+
+  /** Remove folder entries from a ZIP. The docx library writes them, and Word has refused
+      files that carry them when a document is opened through OneDrive or SharePoint. */
+  function stripZipFolders(input) {
+    const src = input instanceof Uint8Array ? input : new Uint8Array(input);
+    const view = new DataView(src.buffer, src.byteOffset, src.byteLength);
+    let eocd = -1;
+    for (let i = src.length - 22; i >= Math.max(0, src.length - 65557); i--) {
+      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) return src;
+    const total = view.getUint16(eocd + 10, true);
+    const cdOffset = view.getUint32(eocd + 16, true);
+    if (total === 0xffff || cdOffset === 0xffffffff) return src; // ZIP64: leave untouched
+    const entries = [];
+    let p = cdOffset;
+    for (let n = 0; n < total; n++) {
+      if (p + 46 > src.length || view.getUint32(p, true) !== 0x02014b50) return src;
+      const nameLen = view.getUint16(p + 28, true);
+      const size = 46 + nameLen + view.getUint16(p + 30, true) + view.getUint16(p + 32, true);
+      entries.push({ cdStart: p, cdSize: size, offset: view.getUint32(p + 42, true), folder: nameLen > 0 && src[p + 46 + nameLen - 1] === 0x2f });
+      p += size;
+    }
+    if (!entries.some((e) => e.folder)) return src;
+    const byOffset = [...entries].sort((a, b) => a.offset - b.offset);
+    byOffset.forEach((e, i) => { e.end = i + 1 < byOffset.length ? byOffset[i + 1].offset : cdOffset; });
+    const keep = entries.filter((e) => !e.folder);
+    const tail = 22 + view.getUint16(eocd + 20, true);
+    const cdSize = keep.reduce((sum, e) => sum + e.cdSize, 0);
+    const out = new Uint8Array(keep.reduce((sum, e) => sum + e.end - e.offset, 0) + cdSize + tail);
+    const outView = new DataView(out.buffer);
+    let at = 0;
+    for (const e of keep) { out.set(src.subarray(e.offset, e.end), at); e.moved = at; at += e.end - e.offset; }
+    const cdStart = at;
+    for (const e of keep) { out.set(src.subarray(e.cdStart, e.cdStart + e.cdSize), at); outView.setUint32(at + 42, e.moved, true); at += e.cdSize; }
+    out.set(src.subarray(eocd, eocd + tail), at);
+    outView.setUint16(at + 8, keep.length, true);
+    outView.setUint16(at + 10, keep.length, true);
+    outView.setUint32(at + 12, cdSize, true);
+    outView.setUint32(at + 16, cdStart, true);
+    return out;
+  }
+
+  return { STAGES, TASK_TYPES, LIMITS, ACTIONS_HEADING, PLAN_HEADING, normalise, problems, briefLines, briefPrompt, writebackNote, expandPrompt, slug, repoName, sessionLink, buildDocx, stripZipFolders };
+})();
+
+if (typeof module !== "undefined") module.exports = Core;
+
+/* ToDo Task Builder: the page. SPEC and Core are defined above this script by the build. */
+
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, props = {}, ...kids) => {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(props)) {
+      if (key === "class") node.className = value;
+      else if (key === "text") node.textContent = value;
+      else if (key.startsWith("data-")) node.setAttribute(key, value);
+      else node[key] = value;
+    }
+    node.append(...kids);
+    return node;
+  };
+  const pad = (n) => String(n).padStart(2, "0");
+  const today = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`; };
+  const clone = (value) => JSON.parse(JSON.stringify(value));
+  const store = {
+    get(key, fallback) { try { const v = localStorage.getItem(key); return v == null ? fallback : JSON.parse(v); } catch { return fallback; } },
+    set(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch { /* storage can be blocked; the page works without it */ } },
+  };
+
+  const caps = { sample: null, db: null, mcp: null, downloads: null };
+  let task = exampleTask();
+  let saved = [];
+  let draftMeta = null;        // where a pulled entry came from, until it is expanded
+  let stopper = null;
+  let storeOnDevice = false;   // true when the shared store cannot be used in this view
+  let firstList = true;
+  let touched = false;
+  let pendingTodoist = null;
+  let writeChain = Promise.resolve();
+
+  function exampleTask() {
+    return Object.assign(Core.normalise(SPEC.example), { id: null, example: true, stage: "Briefed", session_url: "", created_at: "" });
+  }
+
+  function say(id, text, kind) {
+    const node = $(id);
+    node.textContent = text || "";
+    node.className = "note" + (kind ? " " + kind : "");
+  }
+
+  // ------------------------------------------------------------------ render
+
+  function renderRail() {
+    const at = Core.STAGES.indexOf(task.stage);
+    $("rail").replaceChildren(...Core.STAGES.map((name, i) =>
+      el("li", { text: name, class: i === at ? "now" : i < at ? "past" : "" })));
+    const select = $("stage");
+    if (!select.options.length) Core.STAGES.forEach((name) => select.append(el("option", { value: name, text: name })));
+    select.value = task.stage;
+    select.disabled = task.example;
+  }
+
+  function marked(text, labels) {
+    // Bold the labels inside one highlighted run, e.g. "Description:", "Status:".
+    const mark = el("mark");
+    let rest = text;
+    for (const label of labels) {
+      const at = rest.indexOf(label);
+      if (at < 0) continue;
+      if (at > 0) mark.append(rest.slice(0, at));
+      mark.append(el("strong", { text: label }));
+      rest = rest.slice(at + label.length);
+    }
+    mark.append(rest);
+    return mark;
+  }
+
+  function renderBrief() {
+    $("brief-entry").textContent = task.entry.text;
+    $("brief-hint").replaceChildren(...(task.example
+      ? [el("span", { class: "tag", text: "Example" }), " This brief was written from the entry below. Yours will take its place."]
+      : ["Read it through. Fix anything marked (to confirm), then use it."]));
+    const view = $("brief-view");
+    view.replaceChildren();
+    for (const [kind, text] of Core.briefLines(task, SPEC.rules)) {
+      const labels = kind === "meta" ? ["Description:", "Status:", "Calendar date:"]
+        : kind === "field" || kind === "rules" ? [text.slice(0, text.indexOf(":") + 1)] : [];
+      view.append(el("p", { class: kind }, marked(text, labels)));
+    }
+    const found = task.example ? [] : Core.problems(task);
+    $("checks").hidden = !found.length;
+    $("checks").replaceChildren(...found.map((text) => el("li", { text })));
+    $("edit").hidden = $("again").hidden = task.example;
+    $("word").hidden = !caps.downloads;
+  }
+
+  function count(id, length, limit) {
+    const node = $(id);
+    node.textContent = `${length} of ${limit} characters`;
+    node.className = "count" + (length > limit ? " over" : "");
+  }
+
+  function renderWriteback() {
+    if (document.activeElement !== $("w-title")) $("w-title").value = task.writeback.title;
+    if (document.activeElement !== $("w-description")) $("w-description").value = task.writeback.description;
+    count("w-title-count", task.writeback.title.length, Core.LIMITS.writebackTitle);
+    count("w-description-count", task.writeback.description.length, Core.LIMITS.writebackDescription);
+    $("w-title").disabled = $("w-description").disabled = task.example;
+    const button = $("todoist-write");
+    button.hidden = !caps.mcp || task.example;
+    button.textContent = fromTodoist() ? "Update the task in Todoist" : "Add this task to Todoist";
+  }
+
+  function renderSession() {
+    $("start").hidden = !caps.mcp || task.example || caps.noSessions === true;
+    $("open-code").href = Core.sessionLink(briefText(), $("s-repo").value);
+    if (task.session_url) {
+      $("session-note").replaceChildren("A session was started for this task. ",
+        el("a", { href: task.session_url, target: "_blank", rel: "noopener", text: "Open it in Claude Code" }), ".");
+      $("session-note").className = "note good";
+    } else if (!$("session-note").dataset.sticky) say("session-note", "");
+  }
+
+  function renderTasks() {
+    const listNode = $("tasks-list");
+    $("tasks-empty").hidden = saved.length > 0;
+    listNode.hidden = saved.length === 0;
+    $("tasks-hint").textContent = storeOnDevice
+      ? "Briefs are saved on this device only."
+      : "Briefs are saved here so nothing is left as a one-line entry.";
+    listNode.replaceChildren(...saved.map((row) => {
+      const open = el("button", { class: "btn", type: "button", text: row.id === task.id ? "Open now" : "Open" });
+      open.disabled = row.id === task.id;
+      open.addEventListener("click", () => openSaved(row));
+      const remove = el("button", { class: "btn quiet", type: "button", text: "Remove" });
+      remove.addEventListener("click", () => {
+        if (remove.dataset.armed) return removeSaved(row);
+        remove.dataset.armed = "1";
+        remove.textContent = "Confirm remove";
+      });
+      const when = (row.updated_at || "").slice(0, 10);
+      return el("li", {},
+        el("span", { class: "name", text: (row.brief && row.brief.title) || row.title || "Untitled" }),
+        el("span", { class: "meta" }, el("span", { class: "chip", "data-stage": row.stage || "Briefed", text: row.stage || "Briefed" }),
+          ` ${when}${row.entry && row.entry.source ? " · " + row.entry.source : ""}`),
+        el("span", { class: "act" }, open, remove));
+    }));
+  }
+
+  function renderAll() { renderRail(); renderBrief(); renderWriteback(); renderSession(); renderTasks(); }
+
+  // ----------------------------------------------------------------- storage
+
+  function body(t) {
+    const now = new Date().toISOString();
+    t.created_at = t.created_at || now;
+    return { title: t.brief.title, entry: t.entry, task_type: t.task_type, brief: t.brief, writeback: t.writeback,
+      stage: t.stage, session_url: t.session_url || "", created_at: t.created_at, updated_at: now };
+  }
+
+  function persist() {
+    if (task.example) return Promise.resolve();
+    const data = clone(body(task));
+    if (caps.db && !storeOnDevice) {
+      const briefs = caps.db.collection("briefs");
+      const ref = task.id ? briefs.doc(task.id) : briefs.doc();
+      task.id = ref.id;
+      // One write at a time per document: each save waits for the one before it.
+      writeChain = writeChain.then(() => ref.set(data)).catch((error) => {
+        if (error && (error.code === "invalid_argument" || error.code === "revoked" || error.code === "not_granted")) {
+          storeOnDevice = true;
+          saveOnDevice(data);
+        } else say("brief-note", "This brief could not be saved just now. It is still on screen; try again shortly.", "warn");
+      });
+      return writeChain;
+    }
+    saveOnDevice(data);
+    return Promise.resolve();
+  }
+
+  function saveOnDevice(data) {
+    task.id = task.id || "local-" + Date.now().toString(36);
+    const rows = store.get("todo-task-briefs", []).filter((row) => row.id !== task.id);
+    rows.unshift(Object.assign({ id: task.id }, data));
+    store.set("todo-task-briefs", rows.slice(0, 200));
+    saved = rows;
+    renderTasks();
+  }
+
+  function subscribe() {
+    const slow = setTimeout(() => { $("tasks-hint").textContent = "Your saved briefs cannot be reached yet. They will appear when the connection returns."; }, 10000);
+    caps.db.collection("briefs").orderBy("updated_at", "desc").limit(200).onSnapshot((snap) => {
+      if (!snap.metadata.fromCache) clearTimeout(slow);
+      saved = snap.docs.map((doc) => Object.assign({ id: doc.id }, clone(doc.data())));
+      if (firstList && saved.length && task.example && !touched) openSaved(saved[0], true);
+      firstList = false;
+      renderTasks();
+    }, () => {
+      clearTimeout(slow);
+      storeOnDevice = true;
+      saved = store.get("todo-task-briefs", []);
+      renderTasks();
+    });
+  }
+
+  function openSaved(row, quiet) {
+    task = Object.assign(Core.normalise(clone(row)), {
+      id: row.id, example: false, stage: row.stage || "Briefed", session_url: row.session_url || "", created_at: row.created_at || "",
+    });
+    $("entry").value = task.entry.text;
+    $("notes").value = task.entry.notes;
+    $("edit-form").hidden = true;
+    renderAll();
+    if (!quiet) $("brief").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function removeSaved(row) {
+    if (caps.db && !storeOnDevice) caps.db.collection("briefs").doc(row.id).delete().catch(() => {});
+    else { saved = saved.filter((r) => r.id !== row.id); store.set("todo-task-briefs", saved); }
+    if (row.id === task.id) { task = exampleTask(); $("entry").value = ""; $("notes").value = ""; }
+    saved = saved.filter((r) => r.id !== row.id);
+    renderAll();
+  }
+
+  // ------------------------------------------------------------------ expand
+
+  const SAMPLE_COPY = {
+    cancelled: "Stopped.",
+    rate_limited: "Claude is busy, or your usage limit has been reached. Try again later.",
+    session_expired: "Sign in to Claude again, then press Expand.",
+    refused: "Claude declined this entry as written. Reword it and try again.",
+    invalid_json: "The reply could not be read as a brief. Press Expand to try again.",
+    empty_completion: "Claude returned nothing for this entry. Add a few more words and try again.",
+    prompt_too_large: "That entry is too long. Shorten it and try again.",
+    upstream_error: "Something interrupted the reply. Press Expand to try again.",
+  };
+  const SAMPLE_OFF = ["not_granted", "sampling_disabled", "not_declared", "capability_disabled", "capability_removed"];
+
+  function busy(on) {
+    $("expand").disabled = $("again").disabled = on;
+    $("stop").hidden = !on;
+  }
+
+  function adopt(raw, text, notes) {
+    const meta = draftMeta || {};
+    const entry = { text, notes, source: meta.source || "Manual", list: meta.list || "", task_id: meta.task_id || "",
+      captured_on: meta.captured_on || today(), labels: meta.labels || [] };
+    task = Object.assign(Core.normalise(raw, entry), { id: null, example: false, stage: "Briefed", session_url: "", created_at: "" });
+    draftMeta = null;
+    $("edit-form").hidden = true;
+    persist();
+    renderAll();
+    $("brief").scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  async function expand(fresh) {
+    const text = $("entry").value.trim();
+    const notes = $("notes").value.trim();
+    if (!text) { say("capture-note", "Type or paste an entry first.", "warn"); $("entry").focus(); return; }
+    if (!caps.sample) { $("manual").hidden = false; say("capture-note", ""); return; }
+    stopper = new AbortController();
+    busy(true);
+    say("capture-note", "Thinking…");
+    try {
+      const captured = (draftMeta && draftMeta.captured_on) || today();
+      const raw = await caps.sample.json(Core.expandPrompt(SPEC, text, notes, captured), {
+        modelTier: "complex", model: SPEC.model, signal: stopper.signal, cache: !fresh,
+        onText: ({ text: soFar }) => say("capture-note", `Writing the brief… ${soFar.length} characters so far`),
+      });
+      adopt(raw, text, notes);
+      say("capture-note", "Brief written. It is saved under Your tasks.", "good");
+    } catch (error) {
+      const code = error && error.code;
+      if (SAMPLE_OFF.includes(code)) { caps.sample = null; $("manual").hidden = false; say("capture-note", "Claude is not allowed for this page in this view."); }
+      else say("capture-note", SAMPLE_COPY[code] || SAMPLE_COPY.upstream_error, code === "cancelled" ? "" : "bad");
+    } finally {
+      busy(false);
+      stopper = null;
+    }
+  }
+
+  function useManualReply() {
+    const text = $("entry").value.trim();
+    const reply = $("manual-reply").value;
+    const first = reply.indexOf("{"), last = reply.lastIndexOf("}");
+    if (!text) { say("capture-note", "Type or paste an entry first.", "warn"); return; }
+    try {
+      adopt(JSON.parse(reply.slice(first, last + 1)), text, $("notes").value.trim());
+      $("manual-reply").value = "";
+      say("capture-note", "Brief built from the reply.", "good");
+    } catch {
+      say("capture-note", "That reply does not hold a brief. Paste the whole reply, from the first { to the last }.", "bad");
+    }
+  }
+
+  // -------------------------------------------------------------------- copy
+
+  async function copy(text, noteId, label) {
+    try {
+      await navigator.clipboard.writeText(text);
+      $("copy-fallback").hidden = true;
+      say(noteId, `${label} copied.`, "good");
+    } catch {
+      const box = $("copy-fallback");
+      box.hidden = false;
+      box.value = text;
+      box.focus();
+      box.select();
+      say(noteId, "Copying is blocked in this view. The text is selected at the bottom of the page; copy it from there.", "warn");
+    }
+  }
+  const briefText = () => Core.briefPrompt(task, SPEC.rules);
+
+  // -------------------------------------------------------------------- Word
+
+  let docxLoading = null;
+  function loadDocx() {
+    if (window.docx) return Promise.resolve(window.docx);
+    docxLoading = docxLoading || new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/docx@9.7.1/dist/index.iife.js";
+      script.onload = () => (window.docx ? resolve(window.docx) : reject(new Error("docx missing")));
+      script.onerror = () => { docxLoading = null; reject(new Error("docx blocked")); };
+      document.head.append(script);
+    });
+    return docxLoading;
+  }
+
+  async function saveWord() {
+    if (!caps.downloads) return;
+    $("word").disabled = true;
+    say("brief-note", "Building the Word document…");
+    try {
+      const docx = await loadDocx();
+      const packed = await docx.Packer.toBlob(Core.buildDocx(docx, task, SPEC));
+      const blob = new Blob([Core.stripZipFolders(await packed.arrayBuffer())],
+        { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+      const name = `${task.entry.captured_on || today()}-${Core.slug(task.writeback.title || task.brief.title)}.docx`;
+      await caps.downloads.save({ filename: name, data: blob });
+      say("brief-note", "Word document saved. Open it in Word to refine it with the green prompt.", "good");
+    } catch (error) {
+      const code = error && error.code;
+      if (code === "declined") say("brief-note", "Not saved.");
+      else if (code === "rate_limited") say("brief-note", "Another save is still open. Finish that one, then try again.", "warn");
+      else if (code) { caps.downloads = null; $("word").hidden = true; say("brief-note", "Saving files is not available in this view. Copy the brief instead.", "warn"); }
+      else say("brief-note", "The Word document could not be built here. Copy the brief instead.", "bad");
+    } finally {
+      $("word").disabled = false;
+    }
+  }
+
+  // ----------------------------------------------------------------- Todoist
+
+  const TODOIST = "Todoist";
+  const CODE = "Claude Code Remote";
+  const fromTodoist = () => task.entry.source === TODOIST && !!task.entry.task_id;
+  const payloadOf = (result) => {
+    const p = result && result.payload;
+    if (typeof p === "string") { try { return JSON.parse(p); } catch { return {}; } }
+    return p && typeof p === "object" ? p : {};
+  };
+
+  function mcpCopy(error, server, wasWrite) {
+    const code = error && error.code;
+    if (code === "needs_reauth") return `Reconnect ${server} in Claude: Settings, then Connectors.`;
+    if (code === "server_not_connected" || code === "selection_required" || code === "server_not_found") return `Add ${server} in Claude: Settings, then Connectors.`;
+    if (["not_in_manifest", "blocked_by_policy", "approval_required", "not_granted", "consent_required"].includes(code)) return `${server} is not allowed for this page. Allow it when Claude asks, then try again.`;
+    if (code === "tool_error") return `${server} answered with an error: ${String(error.message || "").slice(0, 200)}`;
+    if (code === "cancelled") return "Stopped.";
+    return wasWrite
+      ? `${server} did not confirm the change. Check ${server} before you try again, because it may have gone through.`
+      : `${server} could not be reached just now. Try again in a moment.`;
+  }
+
+  async function pull() {
+    $("pull").disabled = true;
+    say("capture-note", "Asking Todoist…");
+    try {
+      // Labels are checked here, not in the filter: Todoist is changing how filters write them.
+      const skip = ["briefed", "skip-ai", "from-email"];
+      const result = await caps.mcp.callTool(TODOIST, "find-tasks", { filter: "created after: -14 days & !recurring", limit: 100 });
+      const rows = (payloadOf(result).tasks || [])
+        .filter((t) => t && t.id && t.content && !(t.labels || []).some((label) => skip.includes(label)))
+        .sort((a, b) => String(b.addedAt || "").localeCompare(String(a.addedAt || "")));
+      $("picker").hidden = false;
+      $("picker-list").replaceChildren(...rows.map((t) => {
+        const use = el("button", { class: "btn", type: "button", text: "Use this" });
+        use.addEventListener("click", () => {
+          touched = true;
+          $("entry").value = t.content;
+          $("notes").value = t.description || "";
+          $("notes-box").open = !!t.description;
+          draftMeta = { source: TODOIST, task_id: String(t.id), list: String(t.projectId || ""), labels: Array.isArray(t.labels) ? t.labels : [],
+            captured_on: String(t.addedAt || "").slice(0, 10) || today() };
+          $("picker").hidden = true;
+          say("capture-note", "Loaded from Todoist. Press Expand into a brief.", "good");
+          $("entry").focus();
+        });
+        return el("li", {}, el("span", { class: "name", text: t.content }),
+          el("span", { class: "meta", text: `${String(t.addedAt || "").slice(0, 10)}${t.description ? " · has notes" : ""}` }),
+          el("span", { class: "act" }, use));
+      }));
+      say("capture-note", rows.length ? "" : "No new Todoist tasks without a brief in the last 14 days.");
+    } catch (error) {
+      say("capture-note", mcpCopy(error, TODOIST), "bad");
+    } finally {
+      $("pull").disabled = false;
+    }
+  }
+
+  function askTodoist() {
+    const found = Core.problems(task).filter((p) => p.includes("write-back"));
+    if (found.length) { say("writeback-note", found[0], "warn"); return; }
+    pendingTodoist = fromTodoist() ? "update" : "add";
+    $("todoist-confirm-text").textContent = pendingTodoist === "update"
+      ? "This replaces the task’s title and description in Todoist and adds the label “briefed”. Your original entry is kept underneath the new description."
+      : "This adds a new task to your Todoist Inbox with this title and description and the label “briefed”.";
+    $("todoist-confirm").hidden = false;
+  }
+
+  async function writeTodoist() {
+    const mode = pendingTodoist;
+    pendingTodoist = null;
+    $("todoist-confirm").hidden = true;
+    if (!mode) return;
+    $("todoist-write").disabled = true;
+    say("writeback-note", "Writing to Todoist…");
+    const note = Core.writebackNote(task);
+    try {
+      if (mode === "update") {
+        const labels = [...new Set([...(task.entry.labels || []), "briefed"])];
+        await caps.mcp.callTool(TODOIST, "update-tasks", { tasks: [{ id: task.entry.task_id, content: task.writeback.title, description: note, labels }] });
+        task.entry.labels = labels;
+      } else {
+        const result = await caps.mcp.callTool(TODOIST, "add-tasks", { tasks: [{ content: task.writeback.title, description: note, labels: ["briefed"] }] });
+        const made = (payloadOf(result).tasks || [])[0];
+        if (made && made.id) { task.entry.source = TODOIST; task.entry.task_id = String(made.id); task.entry.labels = ["briefed"]; }
+      }
+      if (Core.STAGES.indexOf(task.stage) < 1) task.stage = "Briefed";
+      persist();
+      renderAll();
+      say("writeback-note", mode === "update" ? "The task in Todoist now has the new title and description." : "Added to your Todoist Inbox.", "good");
+    } catch (error) {
+      say("writeback-note", mcpCopy(error, TODOIST, true), "bad");
+    } finally {
+      $("todoist-write").disabled = false;
+    }
+  }
+
+  // ----------------------------------------------------------------- session
+
+  async function loadEnvironments() {
+    const result = await caps.mcp.callTool(CODE, "list_environments", { limit: 20 });
+    const rows = (payloadOf(result).environments || []).filter((e) => e && e.environment_id && e.state !== "archived");
+    const select = $("s-env");
+    const keep = select.value || store.get("todo-task-env", "");
+    select.replaceChildren(el("option", { value: "", text: "Choose where the session runs" }),
+      ...rows.map((e) => el("option", { value: e.environment_id, text: `${e.name}${e.kind === "bridge" ? " (your computer)" : " (cloud)"}` })));
+    if (rows.some((e) => e.environment_id === keep)) select.value = keep;
+    return rows.length;
+  }
+
+  function sessionsOff(message) {
+    caps.noSessions = true;
+    renderSession();
+    $("session-note").dataset.sticky = "1";
+    say("session-note", message, "warn");
+  }
+
+  async function startSession() {
+    const found = Core.problems(task);
+    if (found.length) { say("session-note", "Fix the brief first: " + found[0], "warn"); return; }
+    $("start").disabled = true;
+    delete $("session-note").dataset.sticky;
+    try {
+      if (!$("s-env").value) {
+        say("session-note", "Asking Claude Code where sessions can run…");
+        await loadEnvironments();
+        if (!$("s-env").value) {
+          $("session-settings").open = true;
+          $("session-note").dataset.sticky = "1";
+          say("session-note", "Choose an environment under Session settings, then press Start again.", "warn");
+          return;
+        }
+      }
+      say("session-note", "Starting the session…");
+      const input = { prompt: briefText(), title: task.brief.title.slice(0, 200), tags: ["todo-task"], environment_id: $("s-env").value };
+      const repo = Core.repoName($("s-repo").value);
+      const model = $("s-model").value.trim();
+      if (repo) input.source_url = "https://github.com/" + repo;
+      if (model) input.model = model;
+      const result = await caps.mcp.callTool(CODE, "create_session", input);
+      const id = (JSON.stringify(payloadOf(result)).match(/session_[A-Za-z0-9]+/) || [])[0];
+      task.session_url = id ? "https://claude.ai/code/" + id : "https://claude.ai/code";
+      task.stage = "In session";
+      persist();
+      renderAll();
+    } catch (error) {
+      const code = error && error.code;
+      if (["not_in_manifest", "blocked_by_policy", "server_not_connected", "selection_required", "server_not_found", "not_granted", "capability_disabled", "capability_removed"].includes(code)) {
+        sessionsOff("Starting a session from this page is not available here. Copy the brief, open Claude Code, and paste it into a new session.");
+      } else {
+        $("session-note").dataset.sticky = "1";
+        say("session-note", code === "tool_error" || code === "needs_reauth" || code === "approval_required" || code === "consent_required"
+          ? mcpCopy(error, CODE)
+          : "Claude Code did not confirm the session. Check Claude Code before you try again, because it may have started.", "bad");
+      }
+    } finally {
+      $("start").disabled = false;
+    }
+  }
+
+  // -------------------------------------------------------------------- edit
+
+  const FIELDS = { "f-title": "title", "f-description": "description", "f-status": "status", "f-date": "calendar_date", "f-heading": "context_heading" };
+  const PLAN = { "f-output": "output", "f-tools": "tools", "f-rhythm": "rhythm", "f-done": "done_when" };
+
+  function openEdit() {
+    for (const [id, key] of Object.entries(FIELDS)) $(id).value = task.brief[key];
+    for (const [id, key] of Object.entries(PLAN)) $(id).value = task.brief.plan[key];
+    $("f-context").value = task.brief.context.join("\n\n");
+    $("f-actions").value = task.brief.actions.join("\n");
+    $("f-steps").value = task.brief.plan.steps.join("\n");
+    $("edit-form").hidden = false;
+    $("f-title").focus();
+  }
+
+  function saveEdit(event) {
+    event.preventDefault();
+    const lines = (id, gap) => $(id).value.split(gap).map((s) => s.trim()).filter(Boolean);
+    const brief = {};
+    for (const [id, key] of Object.entries(FIELDS)) brief[key] = $(id).value;
+    brief.context = lines("f-context", /\n\s*\n/);
+    brief.actions = lines("f-actions", "\n");
+    brief.plan = { steps: lines("f-steps", "\n") };
+    for (const [id, key] of Object.entries(PLAN)) brief.plan[key] = $(id).value;
+    const next = Core.normalise({ task_type: task.task_type, brief, writeback: task.writeback }, task.entry);
+    Object.assign(task, { brief: next.brief });
+    $("edit-form").hidden = true;
+    persist();
+    renderAll();
+    say("brief-note", "Changes saved.", "good");
+  }
+
+  // -------------------------------------------------------------------- wire
+
+  $("expand").addEventListener("click", () => { touched = true; expand(false); });
+  $("again").addEventListener("click", () => {
+    $("entry").value = task.entry.text;
+    $("notes").value = task.entry.notes;
+    draftMeta = { source: task.entry.source, task_id: task.entry.task_id, list: task.entry.list, labels: task.entry.labels, captured_on: task.entry.captured_on };
+    $("capture").scrollIntoView({ behavior: "smooth", block: "start" });
+    expand(true);
+  });
+  $("stop").addEventListener("click", () => stopper && stopper.abort());
+  $("pull").addEventListener("click", pull);
+  $("fresh").addEventListener("click", () => {
+    touched = true;
+    task = exampleTask();
+    draftMeta = null;
+    $("entry").value = $("notes").value = "";
+    $("edit-form").hidden = true;
+    say("capture-note", "");
+    renderAll();
+    $("entry").focus();
+  });
+  $("entry").addEventListener("input", () => { touched = true; });
+  $("copy-request").addEventListener("click", () => {
+    const text = $("entry").value.trim();
+    if (!text) { say("capture-note", "Type or paste an entry first.", "warn"); return; }
+    copy(Core.expandPrompt(SPEC, text, $("notes").value.trim(), today()), "capture-note", "Request");
+  });
+  $("manual-use").addEventListener("click", useManualReply);
+
+  $("copy-brief").addEventListener("click", () => copy(briefText(), "brief-note", "Brief"));
+  $("copy-brief-2").addEventListener("click", () => copy(briefText(), "session-note", "Brief"));
+  $("word").addEventListener("click", saveWord);
+  $("edit").addEventListener("click", openEdit);
+  $("edit-cancel").addEventListener("click", () => { $("edit-form").hidden = true; });
+  $("edit-form").addEventListener("submit", saveEdit);
+
+  $("w-title").addEventListener("input", () => { task.writeback.title = $("w-title").value; renderWriteback(); });
+  $("w-description").addEventListener("input", () => { task.writeback.description = $("w-description").value; renderWriteback(); });
+  $("w-title").addEventListener("change", persist);
+  $("w-description").addEventListener("change", persist);
+  $("copy-title").addEventListener("click", () => copy(task.writeback.title, "writeback-note", "Title"));
+  $("copy-description").addEventListener("click", () => copy(Core.writebackNote(task), "writeback-note", "Description"));
+  $("todoist-write").addEventListener("click", askTodoist);
+  $("todoist-yes").addEventListener("click", writeTodoist);
+  $("todoist-no").addEventListener("click", () => { pendingTodoist = null; $("todoist-confirm").hidden = true; });
+
+  $("start").addEventListener("click", startSession);
+  $("stage").addEventListener("change", () => { if (task.example) return; task.stage = $("stage").value; persist(); renderAll(); });
+  $("s-env").addEventListener("change", () => store.set("todo-task-env", $("s-env").value));
+  $("s-repo").value = store.get("todo-task-repo", "");
+  $("s-model").value = store.get("todo-task-model", SPEC.model);
+  $("s-repo").addEventListener("change", () => { store.set("todo-task-repo", $("s-repo").value.trim()); renderSession(); });
+  $("s-model").addEventListener("change", () => store.set("todo-task-model", $("s-model").value.trim()));
+
+  // ------------------------------------------------------------ capabilities
+
+  const use = (name) => (window.claude && typeof window.claude.use === "function"
+    ? window.claude.use(name).catch(() => null) : Promise.resolve(null));
+
+  renderAll();
+  use("sample").then((sample) => { caps.sample = sample; });
+  use("downloads").then((downloads) => { caps.downloads = downloads; renderBrief(); });
+  use("mcp").then((mcp) => { caps.mcp = mcp; $("pull").hidden = !mcp; renderWriteback(); renderSession(); });
+  use("db").then((db) => {
+    caps.db = db;
+    if (db) return subscribe();
+    storeOnDevice = true;
+    saved = store.get("todo-task-briefs", []);
+    renderTasks();
+  });
+})();
+
+</script>

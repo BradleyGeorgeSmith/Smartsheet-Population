@@ -1,0 +1,261 @@
+<title>ToDo Task Builder</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one column of paper sheets, one sheet per stage of a task. The raw entry is set in
+   typewriter type; the brief is a page marked with a yellow highlighter, as it is in Word. */
+:root {
+  --paper: #F1F4F7; --sheet: #FFFFFF; --ink: #17212B; --muted: #566370; --rule: #D3DAE1;
+  --accent: #1F4E79; --on-accent: #FFFFFF; --field: #F8FAFB;
+  --mark: #FFF27A; --mark-edge: #C9A800; --go: #C9F7D3; --go-edge: #2A8F47;
+  --warn: #8A4A00; --bad: #A32420; --good: #1B7438;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #10151A; --sheet: #192028; --ink: #E6EBEF; --muted: #9BA8B4; --rule: #2C3742;
+    --accent: #8FBCE8; --on-accent: #0D1620; --field: #141A21;
+    --mark: #4D4410; --mark-edge: #E3C636; --go: #173F25; --go-edge: #5BCB7C;
+    --warn: #F0AA60; --bad: #F2918C; --good: #72D391; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #10151A; --sheet: #192028; --ink: #E6EBEF; --muted: #9BA8B4; --rule: #2C3742;
+  --accent: #8FBCE8; --on-accent: #0D1620; --field: #141A21;
+  --mark: #4D4410; --mark-edge: #E3C636; --go: #173F25; --go-edge: #5BCB7C;
+  --warn: #F0AA60; --bad: #F2918C; --good: #72D391; color-scheme: dark;
+}
+
+body { background: var(--paper); color: var(--ink); font: 16px/1.5 var(--body); }
+.page {
+  max-width: 44rem; margin: 0 auto; display: grid; gap: 1.25rem;
+  padding-block: 1.25rem 3.5rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+h1 { font: 700 1.9rem/1.1 var(--display); letter-spacing: -0.01em; text-wrap: balance; }
+h2 { font: 700 1.2rem/1.2 var(--display); text-wrap: balance; }
+.lede { color: var(--muted); max-width: 34rem; }
+.top { display: grid; gap: 0.6rem; }
+
+.rail { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.rail li {
+  font-size: 0.8rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 999px;
+  border: 1px solid var(--rule); color: var(--muted); background: var(--sheet);
+}
+.rail li.past { color: var(--ink); border-color: var(--accent); }
+.rail li.now { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+
+.sheet {
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 10px;
+  padding: 1.1rem; display: grid; gap: 0.9rem; min-width: 0;
+}
+.step { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); }
+.head { display: grid; gap: 0.15rem; }
+.hint { color: var(--muted); font-size: 0.92rem; }
+
+label { font-weight: 600; font-size: 0.92rem; display: grid; gap: 0.3rem; }
+textarea, input[type="text"], select {
+  font: inherit; color: var(--ink); background: var(--field); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 0.6rem 0.7rem; width: 100%; box-sizing: border-box; min-width: 0;
+}
+textarea { resize: vertical; line-height: 1.45; }
+#entry { font-family: var(--mono); font-size: 0.95rem; min-height: 6.5rem; }
+:is(textarea, input, select, button, summary, a):focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+.row { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.btn {
+  font: 600 0.95rem var(--body); min-height: 44px; padding: 0.5rem 1rem; border-radius: 8px;
+  border: 1px solid var(--rule); background: var(--sheet); color: var(--ink); cursor: pointer;
+}
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.quiet { border-color: transparent; color: var(--accent); padding-inline: 0.4rem; }
+.btn[disabled] { opacity: 0.55; cursor: default; }
+.btn.link { display: inline-flex; align-items: center; text-decoration: none; }
+.note { font-size: 0.92rem; color: var(--muted); }
+.note.bad { color: var(--bad); } .note.good { color: var(--good); } .note.warn { color: var(--warn); }
+.tag {
+  display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 0.1rem 0.45rem; border-radius: 4px; border: 1px solid var(--rule); color: var(--muted);
+}
+
+/* the brief: a marked-up page */
+.brief { border-left: 4px solid var(--mark-edge); padding-left: 0.9rem; display: grid; gap: 0.6rem; min-width: 0; }
+.brief p { overflow-wrap: anywhere; }
+.brief mark {
+  background: var(--mark); color: var(--ink); padding: 0.12em 0.2em; border-radius: 2px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+.brief .rules { font-size: 0.86rem; }
+.brief .title { font: 700 1.25rem/1.3 var(--display); }
+.brief .heading { font-weight: 700; margin-top: 0.3rem; }
+.brief .item { padding-left: 1.4rem; text-indent: -1.4rem; }
+.raw {
+  font-family: var(--mono); font-size: 0.88rem; background: var(--field); border-left: 4px solid var(--accent);
+  padding: 0.6rem 0.75rem; border-radius: 0 6px 6px 0; overflow-wrap: anywhere; white-space: pre-wrap;
+}
+.checks { color: var(--warn); font-size: 0.9rem; padding-left: 1.1rem; display: grid; gap: 0.15rem; }
+.form { display: grid; gap: 0.75rem; }
+.pair { display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr)); }
+.count { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; }
+.count.over { color: var(--bad); font-weight: 600; }
+.confirm { border: 1px solid var(--warn); border-radius: 8px; padding: 0.7rem; display: grid; gap: 0.6rem; }
+
+.list { list-style: none; padding: 0; display: grid; gap: 0.5rem; }
+.list li {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 0.2rem 0.75rem; align-items: center;
+  border: 1px solid var(--rule); border-radius: 8px; padding: 0.6rem 0.75rem;
+}
+.list .name { font-weight: 600; overflow-wrap: anywhere; }
+.list .meta { grid-column: 1; font-size: 0.82rem; color: var(--muted); overflow-wrap: anywhere; }
+.list .act { grid-column: 2; grid-row: 1 / span 2; display: flex; gap: 0.4rem; align-items: center; }
+.chip { font-size: 0.75rem; font-weight: 700; padding: 0.15rem 0.55rem; border-radius: 999px; border: 1px solid var(--rule); white-space: nowrap; }
+.chip[data-stage="Briefed"] { background: var(--mark); border-color: var(--mark-edge); }
+.chip[data-stage="In session"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.chip[data-stage="Waiting on me"] { border-color: var(--warn); color: var(--warn); }
+.chip[data-stage="Done"] { background: var(--go); border-color: var(--go-edge); }
+.empty { border: 1px dashed var(--rule); border-radius: 8px; padding: 0.9rem; color: var(--muted); }
+details > summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; color: var(--accent); }
+details[open] > summary { margin-bottom: 0.6rem; }
+a { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .btn { transition: opacity 0.15s; } }
+</style>
+
+<div class="page">
+  <header class="top">
+    <h1>ToDo Task Builder</h1>
+    <p class="lede">Type a short To Do entry. Get back a full brief, a Word document, the text for your task list, and a prompt that starts the work in Claude Code.</p>
+    <ol class="rail" id="rail" aria-label="Stage of this task"></ol>
+  </header>
+
+  <section class="sheet" id="capture" aria-labelledby="capture-h">
+    <div class="head"><span class="step">Step 1</span><h2 id="capture-h">Your To Do entry</h2>
+      <p class="hint">Paste it exactly as you captured it. Short, misspelt and half-finished is fine.</p></div>
+    <label for="entry">Entry
+      <textarea id="entry" placeholder="garden timelapse vid?? 30 days tomatoes.. phone on tripod.. music" autocomplete="off"></textarea>
+    </label>
+    <details id="notes-box">
+      <summary>Add what is already in the task’s notes</summary>
+      <label for="notes">Notes on the task
+        <textarea id="notes" rows="3" autocomplete="off"></textarea>
+      </label>
+    </details>
+    <div class="row">
+      <button class="btn primary" id="expand" type="button">Expand into a brief</button>
+      <button class="btn" id="stop" type="button" hidden>Stop</button>
+      <button class="btn" id="pull" type="button" hidden>Pull from Todoist</button>
+      <button class="btn quiet" id="fresh" type="button">Start a new entry</button>
+    </div>
+    <p class="note" id="capture-note" role="status"></p>
+    <div id="picker" hidden>
+      <p class="hint">New tasks from the last 14 days that have no brief yet. Choose one to load it above.</p>
+      <ul class="list" id="picker-list"></ul>
+    </div>
+    <div id="manual" hidden>
+      <p class="hint">Claude cannot be reached from this view. Copy the request into any Claude chat, then paste Claude’s reply here.</p>
+      <div class="row"><button class="btn" id="copy-request" type="button">Copy the request</button></div>
+      <label for="manual-reply">Claude’s reply
+        <textarea id="manual-reply" rows="4" autocomplete="off"></textarea>
+      </label>
+      <div class="row"><button class="btn" id="manual-use" type="button">Build the brief from this reply</button></div>
+    </div>
+  </section>
+
+  <section class="sheet" id="brief" aria-labelledby="brief-h">
+    <div class="head"><span class="step">Step 2</span><h2 id="brief-h">The brief</h2>
+      <p class="hint" id="brief-hint">Read it through. Fix anything marked (to confirm), then use it.</p></div>
+    <div class="raw" id="brief-entry"></div>
+    <div class="brief" id="brief-view"></div>
+    <ul class="checks" id="checks" hidden></ul>
+    <div class="row">
+      <button class="btn primary" id="copy-brief" type="button">Copy the brief for Claude Code</button>
+      <button class="btn" id="word" type="button">Save as a Word document</button>
+      <button class="btn" id="edit" type="button">Edit</button>
+      <button class="btn quiet" id="again" type="button">Try again</button>
+    </div>
+    <p class="note" id="brief-note" role="status"></p>
+    <form class="form" id="edit-form" hidden>
+      <label for="f-title">Title <input type="text" id="f-title"></label>
+      <label for="f-description">Description <textarea id="f-description" rows="3"></textarea></label>
+      <div class="pair">
+        <label for="f-status">Status <input type="text" id="f-status"></label>
+        <label for="f-date">Calendar date <input type="text" id="f-date"></label>
+      </div>
+      <label for="f-heading">Context heading <input type="text" id="f-heading"></label>
+      <label for="f-context">Context, one paragraph per block <textarea id="f-context" rows="7"></textarea></label>
+      <label for="f-actions">Information needed and next actions, one per line <textarea id="f-actions" rows="6"></textarea></label>
+      <label for="f-output">Output <textarea id="f-output" rows="2"></textarea></label>
+      <label for="f-steps">Steps, one per line <textarea id="f-steps" rows="4"></textarea></label>
+      <label for="f-tools">Tools, skills and apps <textarea id="f-tools" rows="2"></textarea></label>
+      <div class="pair">
+        <label for="f-rhythm">Rhythm <input type="text" id="f-rhythm"></label>
+        <label for="f-done">Done when <input type="text" id="f-done"></label>
+      </div>
+      <div class="row">
+        <button class="btn primary" type="submit">Save changes</button>
+        <button class="btn" type="button" id="edit-cancel">Cancel</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="sheet" id="writeback" aria-labelledby="writeback-h">
+    <div class="head"><span class="step">Step 3</span><h2 id="writeback-h">Write back to your task list</h2>
+      <p class="hint">The task gets a proper title and description. Your original entry is kept underneath.</p></div>
+    <label for="w-title">Title <span class="count" id="w-title-count"></span>
+      <input type="text" id="w-title"></label>
+    <label for="w-description">Description <span class="count" id="w-description-count"></span>
+      <textarea id="w-description" rows="5"></textarea></label>
+    <div class="row">
+      <button class="btn" id="copy-title" type="button">Copy title</button>
+      <button class="btn" id="copy-description" type="button">Copy description</button>
+      <button class="btn primary" id="todoist-write" type="button" hidden>Update the task in Todoist</button>
+    </div>
+    <div class="confirm" id="todoist-confirm" hidden>
+      <p id="todoist-confirm-text"></p>
+      <div class="row">
+        <button class="btn primary" id="todoist-yes" type="button">Yes, do it</button>
+        <button class="btn" id="todoist-no" type="button">Cancel</button>
+      </div>
+    </div>
+    <p class="note" id="writeback-note" role="status"></p>
+  </section>
+
+  <section class="sheet" id="session" aria-labelledby="session-h">
+    <div class="head"><span class="step">Step 4</span><h2 id="session-h">Start the work in Claude Code</h2>
+      <p class="hint">The brief is the whole instruction. Claude works out the tools and agents, does what does not depend on you, and reports with evidence.</p></div>
+    <div class="row">
+      <button class="btn primary" id="start" type="button" hidden>Start a Claude Code session</button>
+      <button class="btn" id="copy-brief-2" type="button">Copy the brief</button>
+      <a class="btn link" id="open-code" href="https://claude.ai/code/new" target="_blank" rel="noopener">Open Claude Code with this brief</a>
+    </div>
+    <p class="hint">The link opens a new session with the brief already typed in. If the box is empty when it opens, copy the brief and paste it.</p>
+    <p class="note" id="session-note" role="status"></p>
+    <details id="session-settings">
+      <summary>Session settings</summary>
+      <div class="form">
+        <label for="s-env">Environment <select id="s-env"><option value="">Choose when you first start a session</option></select></label>
+        <label for="s-repo">Repository, as owner/name (optional) <input type="text" id="s-repo" placeholder="owner/repository" autocomplete="off"></label>
+        <label for="s-model">Model <input type="text" id="s-model" autocomplete="off"></label>
+      </div>
+    </details>
+    <label for="stage">Stage of this task
+      <select id="stage"></select>
+    </label>
+  </section>
+
+  <section class="sheet" id="tasks" aria-labelledby="tasks-h">
+    <div class="head"><span class="step">Your tasks</span><h2 id="tasks-h">Every entry you have expanded</h2>
+      <p class="hint" id="tasks-hint">Briefs are saved here so nothing is left as a one-line entry.</p></div>
+    <div class="empty" id="tasks-empty">No briefs yet. Expand your first entry in step 1 and it will be listed here with its stage.</div>
+    <ul class="list" id="tasks-list" hidden></ul>
+  </section>
+
+  <textarea id="copy-fallback" rows="6" hidden aria-label="Text to copy" readonly></textarea>
+</div>
+
+<script>
+/*__SCRIPT__*/
+</script>
