@@ -1,0 +1,44 @@
+{
+  "entry": {
+    "text": "garden timelapse vid?? 30 days tomatoes.. phone on tripod.. music",
+    "notes": "",
+    "source": "Microsoft To Do",
+    "list": "Tasks",
+    "task_id": "",
+    "captured_on": ""
+  },
+  "task_type": "content",
+  "brief": {
+    "title": "Plan a 30-Day Tomato Time-Lapse Video: Set Up the Shoot and Shape the Video Ideas",
+    "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas.",
+    "status": "Waiting for the start date and the camera position. No dates have been supplied yet.",
+    "calendar_date": "Not supplied",
+    "context_heading": "Video Context",
+    "context": [
+      "I would like to make a time-lapse video of tomatoes growing in my garden over 30 days. My phone will sit on a tripod so that every frame is taken from the same position.",
+      "I want the finished video to have music.",
+      "This could be one video or the start of something more (to confirm)."
+    ],
+    "actions": [
+      "Next action: Choose the tripod position and take one test photo.",
+      "Decide the start date.",
+      "Say what kind of music I have in mind.",
+      "Use the supplied information to prepare a one-page shoot plan and three video ideas."
+    ],
+    "plan": {
+      "output": "A one-page shoot plan and three video ideas.",
+      "steps": [
+        "Draft the shoot plan from what is known and mark every gap.",
+        "Write three video ideas, each with a title and an opening line.",
+        "When I supply the start date and the camera position, add them to the shoot plan."
+      ],
+      "tools": "Word for the shoot plan; one writing agent for the video ideas.",
+      "rhythm": "One-off, then a weekly check while the shoot runs.",
+      "done_when": "The shoot plan and the three video ideas are saved, and the plan lists what still waits on me."
+    }
+  },
+  "writeback": {
+    "title": "Plan a 30-day tomato time-lapse video",
+    "description": "Plan a time-lapse video of tomatoes growing over 30 days, filmed on my phone from a tripod, with music. Outcome: a one-page shoot plan and three video ideas. Status: Waiting for the start date and the camera position. No dates have been supplied yet. Next action: Choose the tripod position and take one test photo."
+  }
+}

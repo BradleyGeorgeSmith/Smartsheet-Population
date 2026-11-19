@@ -1,0 +1,10 @@
+# Personal briefs, filled Word documents and content packs stay OUT of git.
+# This repository is public. Remove these lines only after making it private.
+private/
+briefs/
+*.local.json
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+~$*.docx

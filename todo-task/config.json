@@ -1,0 +1,16 @@
+{
+  "filter": "#Inbox & created after: -{days} days & !recurring",
+  "skip_labels": [
+    "briefed",
+    "skip-ai",
+    "from-email"
+  ],
+  "keep_description_over": 500,
+  "window_days": 3,
+  "max_briefs_per_run": 10,
+  "max_sessions_per_run": 3,
+  "write_back": true,
+  "comment_brief": true,
+  "start_sessions": true,
+  "session_model": "claude-fable-5-2"
+}
