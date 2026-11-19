@@ -30,6 +30,7 @@
   let firstList = true;
   let touched = false;
   let pendingTodoist = null;
+  let redo = null;             // the saved brief that "Try again" is rewriting
   let writeChain = Promise.resolve();
 
   function exampleTask() {
@@ -187,7 +188,8 @@
       if (!snap.metadata.fromCache) clearTimeout(slow);
       saved = snap.docs.map((doc) => Object.assign({ id: doc.id }, clone(doc.data())));
       if (firstList && saved.length && task.example && !touched) openSaved(saved[0], true);
-      firstList = false;
+      // A first delivery can be an empty copy from an earlier visit; the confirmed list follows.
+      if (saved.length || !snap.metadata.fromCache) firstList = false;
       renderTasks();
     }, () => {
       clearTimeout(slow);
@@ -239,8 +241,9 @@
     const meta = draftMeta || {};
     const entry = { text, notes, source: meta.source || "Manual", list: meta.list || "", task_id: meta.task_id || "",
       captured_on: meta.captured_on || today(), labels: meta.labels || [] };
-    task = Object.assign(Core.normalise(raw, entry), { id: null, example: false, stage: "Briefed", session_url: "", created_at: "" });
-    draftMeta = null;
+    const kept = redo || { id: null, stage: "Briefed", session_url: "", created_at: "" };
+    task = Object.assign(Core.normalise(raw, entry), { example: false }, kept);
+    draftMeta = redo = null;
     $("edit-form").hidden = true;
     persist();
     renderAll();
@@ -269,7 +272,7 @@
       else say("capture-note", SAMPLE_COPY[code] || SAMPLE_COPY.upstream_error, code === "cancelled" ? "" : "bad");
     } finally {
       busy(false);
-      stopper = null;
+      stopper = redo = null;
     }
   }
 
@@ -543,6 +546,7 @@
     $("entry").value = task.entry.text;
     $("notes").value = task.entry.notes;
     draftMeta = { source: task.entry.source, task_id: task.entry.task_id, list: task.entry.list, labels: task.entry.labels, captured_on: task.entry.captured_on };
+    redo = { id: task.id, stage: task.stage, session_url: task.session_url, created_at: task.created_at };
     $("capture").scrollIntoView({ behavior: "smooth", block: "start" });
     expand(true);
   });

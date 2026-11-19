@@ -275,3 +275,15 @@ def test_doc_command_turns_markdown_into_word_using_the_first_heading_as_title(t
     assert [p.text for p in doc.paragraphs].count("My Notes") == 1
     assert len(doc.tables[0].rows) == 2
     assert cli.main(["doc", str(tmp_path / "missing.md")]) == 2
+
+
+def test_the_same_content_always_builds_the_same_file(tmp_path):
+    from todotask import wordskill
+    first = render.render(None, tmp_path / "a.docx").read_bytes()
+    second = render.render(None, tmp_path / "b.docx").read_bytes()
+    assert first == second
+    assert render.render(None, tmp_path / "a.dotx").read_bytes() == render.render(None, tmp_path / "b.dotx").read_bytes()
+    one = wordskill.build_word_skill(tmp_path / "s1").read_bytes()
+    two = wordskill.build_word_skill(tmp_path / "s2").read_bytes()
+    assert one == two
+    assert not any(name.endswith("/") for name in zipfile.ZipFile(tmp_path / "a.docx").namelist())

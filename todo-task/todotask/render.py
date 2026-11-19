@@ -234,7 +234,26 @@ def save_document(doc: Document, path: str | Path) -> Path:
         staging.unlink()
     else:
         doc.save(str(path))
+    settle_zip(path)
     return path
+
+
+def settle_zip(path: Path) -> None:
+    """Rewrite a ZIP with fixed dates, so the same content always gives the same file.
+
+    Without this every rebuild of the template changes its bytes, and git shows a
+    difference where there is none.
+    """
+    temporary = path.with_name(path.name + ".tmp")
+    with zipfile.ZipFile(path) as source, zipfile.ZipFile(temporary, "w", zipfile.ZIP_DEFLATED) as target:
+        for item in source.infolist():
+            if item.filename.endswith("/"):
+                continue  # folder entries add nothing, and Word has refused files that carry them
+            fixed = zipfile.ZipInfo(item.filename, date_time=(2026, 1, 1, 0, 0, 0))
+            fixed.compress_type = zipfile.ZIP_DEFLATED
+            fixed.external_attr = 0o644 << 16
+            target.writestr(fixed, source.read(item.filename))
+    shutil.move(str(temporary), str(path))
 
 
 def render(task: TaskBrief | None, path: str | Path) -> Path:

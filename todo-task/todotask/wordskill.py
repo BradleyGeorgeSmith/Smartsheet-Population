@@ -11,6 +11,7 @@ import zipfile
 from pathlib import Path
 
 from . import spec
+from .render import settle_zip
 
 SKILL_NAME = "todo-task-brief"
 SKILL_DIR = Path(__file__).resolve().parent.parent / "word-skill"
@@ -65,4 +66,5 @@ def build_word_skill(out_dir: str | Path | None = None) -> Path:
     archive = root / f"{SKILL_NAME}.zip"
     with zipfile.ZipFile(archive, "w", zipfile.ZIP_DEFLATED) as bundle:
         bundle.write(folder / "SKILL.md", f"{SKILL_NAME}/SKILL.md")
+    settle_zip(archive)  # fixed dates, so an unchanged skill gives an unchanged file
     return archive
