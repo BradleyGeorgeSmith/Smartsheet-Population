@@ -29,6 +29,7 @@ Read `todo-task/config.json`. If `todo-task/config.local.json` exists, its value
 | `comment_brief` | Add the full brief to the task as a comment. |
 | `start_sessions` | Start a Claude Code session for briefs that need one. |
 | `session_model` | Model for the sessions. Empty means the default. |
+| `app_url` | The link of the owner's ToDo Task Builder page. Set it in `config.local.json` or in the request, never in `config.json`. |
 
 ## Steps
 
@@ -81,7 +82,14 @@ Read `todo-task/config.json`. If `todo-task/config.local.json` exists, its value
    Then add the label `in-session` to the task. If the tool is not available, say so in the
    report and give the path of each `prompt.md` instead.
 
-8. **Report.** One row per entry: original entry, new title, type, what was written back,
+8. **List the briefs on the phone page** (skip on `dry-run`, or when no `app_url` was given
+   in the settings or the request). With the ArtifactData tool, write each brief's
+   `app-row.json` to the page's `briefs` collection: `set`, with the document id
+   `todoist-<task id>` and `file_path` pointing at the file. Use one `batch` for several.
+   If the task now has a session, add `"stage": "In session"` and the session link as
+   `session_url` with an `update`.
+
+9. **Report.** One row per entry: original entry, new title, type, what was written back,
    and the session started or the reason none was. Then list what was skipped and why.
    End with: Completed; Waiting on; Next action; Completion evidence. The evidence is the
    task ids updated and the session ids started, not a statement that it was done.

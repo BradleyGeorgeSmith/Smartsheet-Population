@@ -105,6 +105,12 @@ def build_playbook(out: str | Path | None = None, source: str | Path | None = No
             meta[key.strip()] = value.strip()
         lines = lines[end + 1:]
 
+    if "title" not in meta:
+        # No front matter: the first top-level heading is the document's title.
+        first = next((n for n, line in enumerate(lines) if line.startswith("# ")), None)
+        if first is not None:
+            meta["title"] = lines.pop(first)[2:].strip()
+
     doc = Document()
     r._page_setup(doc)
     r._styles(doc)

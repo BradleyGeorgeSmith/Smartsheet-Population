@@ -7,6 +7,7 @@
     python -m todotask check brief.json         list anything that breaks the brief structure
     python -m todotask app                      build the ToDo Task Builder page from the spec
     python -m todotask wordskill                package the green prompt as a Claude skill for Word
+    python -m todotask doc notes.md             turn a Markdown file into a Word document
 """
 
 from __future__ import annotations
@@ -71,6 +72,11 @@ def main(argv: list[str] | None = None) -> int:
     p = commands.add_parser("wordskill", help="Package the green prompt as a Claude skill for Word.")
     p.add_argument("--out", type=Path, default=None, help="Folder to write into. Defaults to word-skill/.")
     p.set_defaults(run=cmd_wordskill)
+
+    p = commands.add_parser("doc", help="Turn a Markdown file into a Word document in the house style.")
+    p.add_argument("markdown", type=Path)
+    p.add_argument("--out", type=Path, default=None, help="Defaults to the same name ending in .docx.")
+    p.set_defaults(run=cmd_doc)
 
     p = commands.add_parser("playbook", help="Build the Word copy of the playbook from docs/PLAYBOOK.md.")
     p.add_argument("--out", type=Path, default=None)
@@ -156,6 +162,14 @@ def cmd_check(args) -> int:
         return 0
     _report(problems)
     return 1
+
+
+def cmd_doc(args) -> int:
+    from .playbook import build_playbook
+    if not args.markdown.exists():
+        raise FileNotFoundError(f"{args.markdown} does not exist.")
+    print(build_playbook(args.out or args.markdown.with_suffix(".docx"), args.markdown))
+    return 0
 
 
 def cmd_playbook(args) -> int:

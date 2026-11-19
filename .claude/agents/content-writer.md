@@ -20,7 +20,8 @@ output to produce. The brief is everything you know.
 - Personal, family, money and faith topics: no judgement, no advice on how the owner should
   behave, no warnings that were not asked for.
 - Save the output as Markdown in the folder you were given, with a file name that says what
-  it is. If a Word copy is wanted, run `pandoc <file>.md -o <file>.docx`.
+  it is. Use only headings (`#`, `##`), paragraphs, lists, tables and **bold**, so it converts
+  cleanly. If a Word copy is wanted, run `python -m todotask doc <file>.md` from `todo-task/`.
 
 Reply with the file paths and a two-line summary of what the output contains and which gaps
 are still open.

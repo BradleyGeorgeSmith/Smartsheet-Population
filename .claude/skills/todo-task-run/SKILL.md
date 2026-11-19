@@ -33,7 +33,8 @@ over anything here if the two ever disagree.
 
 5. **Save the outputs.** Put every file in `briefs/<task folder>/output/`, or
    `briefs/<date>-<short name>/output/` if the folder does not exist yet. Write Markdown
-   first. Where a Word document is wanted, convert with `pandoc file.md -o file.docx`.
+   first, using only headings (`#`, `##`), paragraphs, lists, tables and **bold**. Where a
+   Word document is wanted, run `python -m todotask doc <file>.md` from `todo-task/`.
    `briefs/` is git-ignored: never commit outputs, because this repository is public.
 
 6. **Check before reporting.** Give the brief and the outputs to the `evidence-checker`

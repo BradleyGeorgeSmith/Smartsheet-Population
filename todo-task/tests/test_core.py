@@ -264,3 +264,14 @@ def test_playbook_word_copy_is_built_from_the_markdown(tmp_path):
     assert "1. First step wrapped" in text and "2. Second" in text and "Completed: x" in text
     assert "• bullet" in text and "code line" in text
     assert [c.text for c in doc.tables[0].rows[1].cells] == ["x", "y"]
+
+
+def test_doc_command_turns_markdown_into_word_using_the_first_heading_as_title(tmp_path):
+    source = tmp_path / "notes.md"
+    source.write_text("# My Notes\n\nSome text.\n\n## Part\n\n| Family | How related |\n|---|---|\n|  |  |\n")
+    assert cli.main(["doc", str(source)]) == 0
+    doc = Document(str(tmp_path / "notes.docx"))
+    assert doc.paragraphs[0].text == "My Notes" and doc.core_properties.title == "My Notes"
+    assert [p.text for p in doc.paragraphs].count("My Notes") == 1
+    assert len(doc.tables[0].rows) == 2
+    assert cli.main(["doc", str(tmp_path / "missing.md")]) == 2
